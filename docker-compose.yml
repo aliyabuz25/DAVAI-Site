@@ -1,0 +1,33 @@
+services:
+  davai:
+    container_name: davai
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: davai:latest
+    pull_policy: build
+    restart: unless-stopped
+    environment:
+      PORT: "5050"
+      HOST: "0.0.0.0"
+      ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY}"
+      ALLOWED_ORIGINS: "https://davai.tech,http://davai.tech"
+      TRUST_PROXY: "1"
+    volumes:
+      - /datastore/davai/data:/app/data
+    networks:
+      - edge
+      - octobot-net
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.docker.network=edge'
+      - 'traefik.http.routers.davai.rule=Host(`davai.tech`)'
+      - 'traefik.http.routers.davai.entrypoints=web,websecure'
+      - 'traefik.http.routers.davai.tls=true'
+      - 'traefik.http.services.davai.loadbalancer.server.port=5050'
+
+networks:
+  edge:
+    external: true
+  octobot-net:
+    external: true

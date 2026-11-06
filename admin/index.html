@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>DAVAI Admin</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+<link href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.min.css" rel="stylesheet"/>
+<style>
+  :root {
+    --sidebar-w: 220px;
+    --bg:        #000;
+    --surface:   #111;
+    --surface2:  #1a1a1a;
+    --surface3:  #222;
+    --border:    #2a2a2a;
+    --text:      #fff;
+    --muted:     #666;
+    --muted2:    #888;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,'Helvetica Neue',sans-serif; font-size:.875rem; }
+
+  /* ── Sidebar ─────────────────────────────────── */
+  #sidebar {
+    position:fixed; top:0; left:0; bottom:0; width:var(--sidebar-w);
+    background:var(--surface); border-right:1px solid var(--border);
+    display:flex; flex-direction:column; z-index:100; overflow-y:auto;
+  }
+  .sidebar-brand { padding:20px 18px 16px; border-bottom:1px solid var(--border); }
+  .sidebar-brand .wordmark { font-size:.8rem; font-weight:800; letter-spacing:.18em; color:var(--text); }
+  .sidebar-brand .sub      { font-size:.68rem; color:var(--muted); margin-top:2px; }
+  .nav-section { padding:16px 10px 4px; }
+  .nav-label   { font-size:.62rem; font-weight:600; color:var(--muted); letter-spacing:.08em; text-transform:uppercase; padding:0 8px; margin-bottom:4px; }
+  .nav-item {
+    display:flex; align-items:center; gap:9px;
+    padding:8px 10px; border-radius:7px; cursor:pointer;
+    color:var(--muted2); font-size:.82rem; font-weight:500;
+    transition:all .12s; margin-bottom:1px; border:none; background:none; width:100%; text-align:left;
+  }
+  .nav-item:hover  { background:var(--surface2); color:var(--text); }
+  .nav-item.active { background:var(--surface3); color:var(--text); font-weight:600; }
+  .nav-item i      { font-size:.95rem; width:16px; text-align:center; }
+  .sidebar-footer  { margin-top:auto; padding:16px 10px; border-top:1px solid var(--border); }
+
+  /* ── Main ──────────────────────────────────────── */
+  #main { margin-left:var(--sidebar-w); min-height:100vh; display:flex; flex-direction:column; }
+  .topbar {
+    height:52px; background:var(--surface); border-bottom:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 24px; position:sticky; top:0; z-index:50;
+  }
+  .topbar-title { font-size:.95rem; font-weight:600; }
+  .topbar-right { display:flex; align-items:center; gap:12px; }
+  .avatar { width:30px; height:30px; border-radius:50%; background:var(--surface3); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:.7rem; font-weight:700; }
+  .content { padding:24px; flex:1; }
+
+  /* ── Stat cards ─────────────────────────────────── */
+  .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:18px 20px; }
+  .stat-card .val   { font-size:1.6rem; font-weight:700; letter-spacing:-.04em; line-height:1; }
+  .stat-card .label { font-size:.72rem; color:var(--muted2); margin-top:4px; text-transform:uppercase; letter-spacing:.05em; font-weight:600; }
+
+  /* ── Section card ───────────────────────────────── */
+  .section-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden; margin-bottom:24px; }
+  .section-head { display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-bottom:1px solid var(--border); }
+  .section-head h2 { font-size:.88rem; font-weight:600; margin:0; }
+
+  /* ── Simple tables (dashboard) ──────────────────── */
+  .simple-table { width:100%; border-collapse:collapse; }
+  .simple-table th { font-size:.68rem; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; padding:10px 16px; border-bottom:1px solid var(--border); text-align:left; background:var(--surface); }
+  .simple-table td { padding:11px 16px; border-bottom:1px solid var(--border); font-size:.82rem; vertical-align:middle; }
+  .simple-table tr:last-child td { border-bottom:none; }
+  .simple-table tr:hover td { background:var(--surface2); }
+
+  /* ── DataTables dark theme ──────────────────────── */
+  html.dark {
+    --dt-html-background: #111;
+    --dt-row-hover: 255,255,255;
+    --dt-row-stripe: 255,255,255;
+    --dt-column-ordering: 255,255,255;
+  }
+
+  div.dt-container { padding:0; background:var(--surface); }
+
+  /* Search & length controls */
+  div.dt-container .dt-search label,
+  div.dt-container .dt-length label { color:var(--muted2); font-size:.78rem; gap:6px; display:flex; align-items:center; }
+  div.dt-container .dt-search input,
+  div.dt-container .dt-length select {
+    background:var(--surface2) !important; border:1px solid var(--border) !important;
+    color:#fff !important; border-radius:7px; padding:5px 10px;
+    font-size:.78rem; outline:none; font-family:inherit;
+  }
+  div.dt-container .dt-search input:focus,
+  div.dt-container .dt-length select:focus { border-color:#444 !important; }
+  div.dt-container .dt-length select option { background:var(--surface2); }
+
+  /* Info text */
+  div.dt-container .dt-info { color:var(--muted); font-size:.74rem; }
+
+  /* Pagination */
+  div.dt-container .dt-paging .dt-paging-button {
+    background:transparent; border:1px solid var(--border) !important;
+    color:var(--muted2) !important; border-radius:6px; font-size:.74rem;
+    padding:3px 10px; margin:0 2px; cursor:pointer; transition:all .12s;
+  }
+  div.dt-container .dt-paging .dt-paging-button.current,
+  div.dt-container .dt-paging .dt-paging-button.current:hover {
+    background:var(--surface3) !important; color:#fff !important;
+    border-color:#444 !important;
+  }
+  div.dt-container .dt-paging .dt-paging-button:hover:not(.disabled) {
+    background:var(--surface2) !important; color:#fff !important;
+    border-color:#444 !important;
+  }
+  div.dt-container .dt-paging .dt-paging-button.disabled,
+  div.dt-container .dt-paging .dt-paging-button.disabled:hover {
+    color:#333 !important; border-color:var(--border) !important;
+    background:transparent !important; cursor:default;
+  }
+
+  /* Layout rows (top/bottom bars) */
+  div.dt-container .dt-layout-row {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:10px 16px; border-bottom:1px solid var(--border);
+    background:var(--surface);
+  }
+  div.dt-container .dt-layout-row:last-child { border-bottom:none; border-top:1px solid var(--border); }
+  div.dt-container .dt-layout-cell { padding:0; }
+
+  /* Table */
+  table.dataTable { border-collapse:collapse !important; width:100% !important; margin:0 !important; }
+  table.dataTable thead > tr > th {
+    font-size:.68rem; font-weight:600; color:var(--muted);
+    text-transform:uppercase; letter-spacing:.06em;
+    padding:10px 16px !important; border-bottom:1px solid var(--border) !important;
+    background:var(--surface); white-space:nowrap;
+  }
+  html.dark table.dataTable > thead > tr > th { border-bottom-color:var(--border) !important; }
+  table.dataTable thead th.dt-orderable-asc:hover,
+  table.dataTable thead th.dt-orderable-desc:hover { outline:none !important; color:#fff; }
+  table.dataTable > tbody > tr > td {
+    padding:10px 16px !important; border-bottom:1px solid var(--border) !important;
+    font-size:.82rem; vertical-align:middle; color:var(--text); background:transparent;
+  }
+  table.dataTable > tbody > tr:last-child > td { border-bottom:none !important; }
+  table.dataTable > tbody > tr:hover > td { background:var(--surface2) !important; box-shadow:none !important; }
+  table.dataTable > tbody > tr > td.sorting_1 { background:transparent !important; box-shadow:none !important; }
+
+  /* Sort arrows */
+  table.dataTable thead th span.dt-column-order { opacity:.35; }
+  table.dataTable thead th.dt-ordering-asc span.dt-column-order,
+  table.dataTable thead th.dt-ordering-desc span.dt-column-order { opacity:.8; }
+
+  /* ── Badges ────────────────────────────────────── */
+  .badge-free    { background:rgba(255,255,255,.07); color:#aaa; }
+  .badge-pro     { background:rgba(255,255,255,.12); color:#fff; }
+  .badge-pro_max { background:rgba(255,255,255,.18); color:#fff; font-weight:700; }
+  .badge-promax  { background:rgba(255,255,255,.18); color:#fff; font-weight:700; }
+  .badge-pending { background:rgba(255,159,10,.12);  color:#ff9f0a; }
+  .badge-approved{ background:rgba(48,209,88,.12);   color:#30d158; }
+  .badge-rejected{ background:rgba(255,69,58,.12);   color:#ff453a; }
+  .badge-pill    { display:inline-block; padding:2px 9px; border-radius:99px; font-size:.68rem; font-weight:600; letter-spacing:.02em; }
+  .badge-web     { background:rgba(10,132,255,.12); color:#0a84ff; }
+  .badge-app     { background:rgba(48,209,88,.12);  color:#30d158; }
+
+  /* ── Buttons ───────────────────────────────────── */
+  .btn-sm-white { background:#fff; color:#000; border:none; border-radius:6px; padding:4px 10px; font-size:.72rem; font-weight:700; cursor:pointer; transition:opacity .15s; white-space:nowrap; }
+  .btn-sm-white:hover { opacity:.85; }
+  .btn-sm-red   { background:rgba(255,69,58,.12); color:#ff453a; border:1px solid rgba(255,69,58,.25); border-radius:6px; padding:4px 10px; font-size:.72rem; font-weight:600; cursor:pointer; white-space:nowrap; }
+  .btn-sm-red:hover { background:rgba(255,69,58,.22); }
+  .btn-sm-ghost { background:none; color:#888; border:1px solid var(--border); border-radius:6px; padding:4px 10px; font-size:.72rem; cursor:pointer; white-space:nowrap; }
+  .btn-sm-ghost:hover { color:#fff; border-color:#555; }
+  .action-cell  { display:flex; gap:4px; align-items:center; }
+
+  /* ── Form elements ─────────────────────────────── */
+  .form-ctrl { background:var(--surface2); border:1px solid var(--border); color:#fff; border-radius:7px; padding:7px 11px; font-size:.82rem; outline:none; transition:border-color .15s; width:100%; font-family:inherit; }
+  .form-ctrl:focus { border-color:#555; }
+  select.form-ctrl option { background:var(--surface2); }
+
+  /* ── Modal ─────────────────────────────────────── */
+  .modal-backdrop-custom { position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:200; display:none; align-items:center; justify-content:center; }
+  .modal-backdrop-custom.open { display:flex; }
+  .modal-box { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:28px; width:100%; max-width:440px; }
+  .modal-box h3 { font-size:.95rem; font-weight:700; margin:0 0 20px; }
+  .modal-label  { font-size:.72rem; font-weight:600; color:var(--muted2); text-transform:uppercase; letter-spacing:.04em; margin-bottom:5px; display:block; }
+  .modal-footer { display:flex; gap:8px; justify-content:flex-end; margin-top:20px; }
+
+  /* ── Pages ─────────────────────────────────────── */
+  .page { display:none; }
+  .page.active { display:block; }
+
+  /* ── Empty ─────────────────────────────────────── */
+  .empty-row td { text-align:center; color:var(--muted); padding:40px !important; font-size:.82rem; }
+
+  /* ── Color picker ──────────────────────────────── */
+  input[type="color"].site-color-input {
+    width:36px; height:36px; border:1px solid var(--border); border-radius:7px;
+    background:var(--surface2); padding:3px; cursor:pointer; flex-shrink:0;
+  }
+  input[type="color"].site-color-input::-webkit-color-swatch-wrapper { padding:0; border-radius:4px; }
+  input[type="color"].site-color-input::-webkit-color-swatch { border:none; border-radius:4px; }
+  textarea.form-ctrl { resize:vertical; min-height:60px; }
+
+  /* ── Toast ─────────────────────────────────────── */
+  #toast { position:fixed; bottom:24px; right:24px; background:var(--surface3); border:1px solid var(--border); color:#fff; border-radius:8px; padding:10px 16px; font-size:.82rem; font-weight:500; z-index:300; opacity:0; transition:opacity .2s; pointer-events:none; }
+  #toast.show { opacity:1; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div id="sidebar">
+  <div class="sidebar-brand">
+    <div class="wordmark">DAVAI</div>
+    <div class="sub">Admin Panel</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Overview</div>
+    <button class="nav-item active" onclick="showPage('dashboard')"><i class="bi bi-grid-1x2"></i> Dashboard</button>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Management</div>
+    <button class="nav-item" onclick="showPage('users')"><i class="bi bi-people"></i> Users</button>
+    <button class="nav-item" onclick="showPage('payments')"><i class="bi bi-credit-card"></i> Payments</button>
+    <button class="nav-item" onclick="showPage('codes')"><i class="bi bi-key"></i> Pro Codes</button>
+    <button class="nav-item" onclick="showPage('site')"><i class="bi bi-palette"></i> Site Editor</button>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">System</div>
+    <button class="nav-item" onclick="showPage('settings')"><i class="bi bi-gear"></i> Settings</button>
+    <button class="nav-item" onclick="showPage('logs')"><i class="bi bi-terminal"></i> Logs</button>
+  </div>
+  <div class="sidebar-footer">
+    <button class="nav-item" onclick="doLogout()"><i class="bi bi-box-arrow-left"></i> Sign Out</button>
+  </div>
+</div>
+
+<!-- Main -->
+<div id="main">
+  <div class="topbar">
+    <span class="topbar-title" id="topbar-title">Dashboard</span>
+    <div class="topbar-right">
+      <span style="font-size:.78rem;color:#666" id="admin-username">admin</span>
+      <div class="avatar" id="admin-avatar">A</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3"><div class="stat-card"><div class="val" id="s-total-users">—</div><div class="label">Total Users</div></div></div>
+        <div class="col-6 col-md-3"><div class="stat-card"><div class="val" id="s-pro-users">—</div><div class="label">Pro Users</div></div></div>
+        <div class="col-6 col-md-3"><div class="stat-card"><div class="val" id="s-pending-payments">—</div><div class="label">Pending Payments</div></div></div>
+        <div class="col-6 col-md-3"><div class="stat-card"><div class="val" id="s-today-signups">—</div><div class="label">Today Signups</div></div></div>
+      </div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="section-card">
+            <div class="section-head"><h2>Recent Users</h2><button class="btn-sm-ghost" onclick="showPage('users')">See all</button></div>
+            <table class="simple-table"><thead><tr><th>Name</th><th>Plan</th><th>Source</th><th>Joined</th></tr></thead>
+            <tbody id="dash-recent-users"><tr class="empty-row"><td colspan="4">Loading...</td></tr></tbody></table>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="section-card">
+            <div class="section-head"><h2>Pending Payments</h2><button class="btn-sm-ghost" onclick="showPage('payments')">See all</button></div>
+            <table class="simple-table"><thead><tr><th>Name</th><th>Plan</th><th>Source</th><th>Action</th></tr></thead>
+            <tbody id="dash-pending-payments"><tr class="empty-row"><td colspan="4">Loading...</td></tr></tbody></table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- USERS -->
+    <div class="page" id="page-users">
+      <div class="section-card">
+        <div class="section-head">
+          <h2>Users</h2>
+          <button class="btn-sm-white" onclick="openAddUser()"><i class="bi bi-plus"></i> Add User</button>
+        </div>
+        <div class="p-0">
+          <table id="dt-users" class="table" style="width:100%">
+            <thead><tr><th>Name</th><th>Email</th><th>Program</th><th>Plan</th><th>Source</th><th>Joined</th><th>Actions</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAYMENTS -->
+    <div class="page" id="page-payments">
+      <div class="section-card">
+        <div class="section-head">
+          <h2>Payments</h2>
+          <select class="form-ctrl" style="width:140px" id="payment-filter" onchange="reloadPayments()">
+            <option value="">All</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+        <div class="p-0">
+          <table id="dt-payments" class="table" style="width:100%">
+            <thead><tr><th>Sender</th><th>Plan</th><th>Reference</th><th>Status</th><th>Source</th><th>Date</th><th>Actions</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- CODES -->
+    <div class="page" id="page-codes">
+      <div class="section-card">
+        <div class="section-head">
+          <h2>Pro Codes</h2>
+          <button class="btn-sm-white" onclick="openGenerateCode()"><i class="bi bi-plus"></i> Generate Code</button>
+        </div>
+        <div class="p-0">
+          <table id="dt-codes" class="table" style="width:100%">
+            <thead><tr><th>Code</th><th>Plan</th><th>Created</th><th>Used</th><th>Actions</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SITE EDITOR -->
+    <div class="page" id="page-site">
+      <div class="row g-3">
+
+        <!-- Colors -->
+        <div class="col-12">
+          <div class="section-card">
+            <div class="section-head"><h2>Colors</h2></div>
+            <div class="p-3">
+              <div class="row g-3">
+                <div class="col-md-2 col-6"><label class="modal-label">Background</label><div style="display:flex;gap:6px;align-items:center"><input type="color" class="site-color-input" id="sc-bg-base" value="#000000"/><input class="form-ctrl" id="sc-bg-base-hex" style="font-family:monospace" placeholder="#000000"/></div></div>
+                <div class="col-md-2 col-6"><label class="modal-label">Surface</label><div style="display:flex;gap:6px;align-items:center"><input type="color" class="site-color-input" id="sc-bg-surface" value="#0e0e11"/><input class="form-ctrl" id="sc-bg-surface-hex" style="font-family:monospace" placeholder="#0e0e11"/></div></div>
+                <div class="col-md-2 col-6"><label class="modal-label">Text Main</label><div style="display:flex;gap:6px;align-items:center"><input type="color" class="site-color-input" id="sc-text-main" value="#ffffff"/><input class="form-ctrl" id="sc-text-main-hex" style="font-family:monospace" placeholder="#ffffff"/></div></div>
+                <div class="col-md-2 col-6"><label class="modal-label">Text Muted</label><div style="display:flex;gap:6px;align-items:center"><input type="color" class="site-color-input" id="sc-text-muted" value="#a1a1aa"/><input class="form-ctrl" id="sc-text-muted-hex" style="font-family:monospace" placeholder="#a1a1aa"/></div></div>
+                <div class="col-md-2 col-6"><label class="modal-label">Card BG</label><div style="display:flex;gap:6px;align-items:center"><input type="color" class="site-color-input" id="sc-card-bg" value="#0e0e11"/><input class="form-ctrl" id="sc-card-bg-hex" style="font-family:monospace" placeholder="#0e0e11"/></div></div>
+                <div class="col-md-2 col-6"><label class="modal-label">Accent</label><div style="display:flex;gap:6px;align-items:center"><input type="color" class="site-color-input" id="sc-accent" value="#ffffff"/><input class="form-ctrl" id="sc-accent-hex" style="font-family:monospace" placeholder="#ffffff"/></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="col-md-6">
+          <div class="section-card">
+            <div class="section-head"><h2>Primary Button</h2></div>
+            <div class="p-3">
+              <div class="row g-3">
+                <div class="col-6"><label class="modal-label">Background</label><div style="display:flex;gap:6px;align-items:center"><input type="color" class="site-color-input" id="sc-btn-primary-bg" value="#ffffff"/><input class="form-ctrl" id="sc-btn-primary-bg-hex" style="font-family:monospace"/></div></div>
+                <div class="col-6"><label class="modal-label">Text Color</label><div style="display:flex;gap:6px;align-items:center"><input type="color" class="site-color-input" id="sc-btn-primary-color" value="#000000"/><input class="form-ctrl" id="sc-btn-primary-color-hex" style="font-family:monospace"/></div></div>
+                <div class="col-12"><label class="modal-label">Button Label</label><input class="form-ctrl" id="sc-btn-primary-text" placeholder="Test Study Assistant"/></div>
+              </div>
+              <div style="margin-top:14px">
+                <div style="font-size:.72rem;color:#555;margin-bottom:6px">Preview</div>
+                <button id="btn-primary-preview" style="background:#fff;color:#000;border:none;border-radius:8px;padding:8px 18px;font-weight:600;font-size:.85rem;cursor:default;transition:none">Test Study Assistant</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="section-card">
+            <div class="section-head"><h2>Secondary Button</h2></div>
+            <div class="p-3">
+              <div class="row g-3">
+                <div class="col-6"><label class="modal-label">Background</label><input class="form-ctrl" id="sc-btn-secondary-bg" placeholder="rgba(255,255,255,0.08)" style="font-family:monospace"/></div>
+                <div class="col-6"><label class="modal-label">Text Color</label><div style="display:flex;gap:6px;align-items:center"><input type="color" class="site-color-input" id="sc-btn-secondary-color" value="#ffffff"/><input class="form-ctrl" id="sc-btn-secondary-color-hex" style="font-family:monospace"/></div></div>
+              </div>
+              <div style="margin-top:14px">
+                <div style="font-size:.72rem;color:#555;margin-bottom:6px">Preview</div>
+                <button id="btn-secondary-preview" style="background:rgba(255,255,255,0.08);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-weight:500;font-size:.85rem;cursor:default;transition:none">Study Podcasts</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navbar -->
+        <div class="col-md-6">
+          <div class="section-card">
+            <div class="section-head"><h2>Navbar Brand Logo</h2></div>
+            <div class="p-3 row g-3">
+              <div class="col-6"><label class="modal-label">Logo BG</label><div style="display:flex;gap:6px;align-items:center"><input type="color" class="site-color-input" id="sc-navbar-brand-bg" value="#ffffff"/><input class="form-ctrl" id="sc-navbar-brand-bg-hex" style="font-family:monospace"/></div></div>
+              <div class="col-6"><label class="modal-label">Logo Icon Color</label><div style="display:flex;gap:6px;align-items:center"><input type="color" class="site-color-input" id="sc-navbar-brand-color" value="#000000"/><input class="form-ctrl" id="sc-navbar-brand-color-hex" style="font-family:monospace"/></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Texts -->
+        <div class="col-12">
+          <div class="section-card">
+            <div class="section-head"><h2>Text Content</h2></div>
+            <div class="p-3">
+              <div class="row g-3">
+                <div class="col-md-6"><label class="modal-label">Site Title</label><input class="form-ctrl" id="sc-site-title" placeholder="DAVAI"/></div>
+                <div class="col-md-6"><label class="modal-label">Hero Tagline</label><input class="form-ctrl" id="sc-site-tagline" placeholder="Free AI study companion..."/></div>
+                <div class="col-12"><label class="modal-label">Hero Subtitle</label><textarea class="form-ctrl" id="sc-hero-subtitle" rows="2" placeholder="Structured criteria guidance..."></textarea></div>
+                <div class="col-md-6"><label class="modal-label">CTA Section Title</label><input class="form-ctrl" id="sc-cta-title" placeholder="Begin Your Study Session"/></div>
+                <div class="col-md-6"><label class="modal-label">CTA Subtitle</label><input class="form-ctrl" id="sc-cta-subtitle" placeholder="Access the homework tracker..."/></div>
+                <div class="col-md-6"><label class="modal-label">Features Section Title</label><input class="form-ctrl" id="sc-features-title" placeholder="Everything you need..."/></div>
+                <div class="col-md-6"><label class="modal-label">Footer Text</label><input class="form-ctrl" id="sc-footer-text" placeholder="DAVAI © 2026"/></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Save bar -->
+        <div class="col-12">
+          <div class="section-card">
+            <div class="p-3" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <button class="btn-sm-white" onclick="saveSiteConfig()">Save All Changes</button>
+              <button class="btn-sm-ghost" onclick="resetSiteConfig()">Reset to Defaults</button>
+              <a href="http://localhost:5050/" target="_blank" class="btn-sm-ghost">Preview Site</a>
+              <span id="site-save-status" style="font-size:.75rem;color:#30d158;display:none">Saved — reload site to see changes</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="page" id="page-settings">
+      <div class="row g-3">
+
+        <!-- AI Config card -->
+        <div class="col-12">
+          <div class="section-card">
+            <div class="section-head"><h2>AI Configuration</h2><span id="ai-save-status" style="font-size:.75rem;color:#30d158;display:none">Saved</span></div>
+            <div class="p-3">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="modal-label">API Base URL</label>
+                  <input class="form-ctrl" id="ai-base-url" placeholder="https://app.claude.gg/v1"/>
+                </div>
+                <div class="col-md-6">
+                  <label class="modal-label">API Key</label>
+                  <div style="display:flex;gap:8px">
+                    <input class="form-ctrl" id="ai-api-key" type="password" placeholder="Enter new key to update..."/>
+                    <button class="btn-sm-ghost" onclick="toggleKeyVisibility()" id="key-eye-btn"><i class="bi bi-eye"></i></button>
+                  </div>
+                  <div style="font-size:.72rem;color:#555;margin-top:4px" id="ai-key-hint"></div>
+                </div>
+                <div class="col-md-6">
+                  <label class="modal-label">Active Model</label>
+                  <div style="position:relative">
+                    <div id="model-loading" style="color:#555;font-size:.8rem;padding:8px 0">Loading...</div>
+                    <select class="form-ctrl" id="model-select" style="display:none" onchange="onModelSelect(this.value)"></select>
+                  </div>
+                </div>
+                <!-- Limits row -->
+                <div class="col-12"><div style="height:1px;background:var(--border);margin:4px 0"></div></div>
+                <div class="col-md-3 col-6">
+                  <label class="modal-label">Max Tokens / Reply</label>
+                  <input class="form-ctrl" id="ai-max-tokens" type="number" min="100" max="4096" placeholder="800"/>
+                  <div style="font-size:.68rem;color:#555;margin-top:3px">Shorter = cheaper</div>
+                </div>
+                <div class="col-md-3 col-6">
+                  <label class="modal-label">Free / hour</label>
+                  <input class="form-ctrl" id="ai-free-limit" type="number" min="1" max="9999" placeholder="15"/>
+                </div>
+                <div class="col-md-3 col-6">
+                  <label class="modal-label">Pro / hour</label>
+                  <input class="form-ctrl" id="ai-pro-limit" type="number" min="1" max="9999" placeholder="60"/>
+                </div>
+                <div class="col-md-3 col-6">
+                  <label class="modal-label">Pro Max / hour</label>
+                  <input class="form-ctrl" id="ai-promax-limit" type="number" min="1" max="9999" placeholder="150"/>
+                </div>
+
+                <div class="col-12" style="display:flex;gap:8px;align-items:center">
+                  <button class="btn-sm-white" onclick="saveAIConfig()">Save Changes</button>
+                  <button class="btn-sm-ghost" onclick="testAIConfig()">Test Connection</button>
+                  <span id="ai-test-result" style="font-size:.75rem;color:#888"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Change password -->
+        <div class="col-md-6">
+          <div class="section-card">
+            <div class="section-head"><h2>Change Password</h2></div>
+            <div class="p-3">
+              <div class="mb-3"><label class="modal-label">Current Password</label><input class="form-ctrl" id="cur-pw" type="password"/></div>
+              <div class="mb-3"><label class="modal-label">New Password</label><input class="form-ctrl" id="new-pw" type="password"/></div>
+              <div class="mb-3"><label class="modal-label">Confirm New Password</label><input class="form-ctrl" id="new-pw2" type="password"/></div>
+              <button class="btn-sm-white" onclick="changePassword()">Update Password</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- System info -->
+        <div class="col-md-6">
+          <div class="section-card">
+            <div class="section-head"><h2>System Info</h2></div>
+            <div class="p-3">
+              <table class="simple-table">
+                <tbody>
+                  <tr><td style="color:#666">Version</td><td>1.0.0</td></tr>
+                  <tr><td style="color:#666">Database</td><td>SQLite</td></tr>
+                  <tr><td style="color:#666">Server</td><td>Python / http.server</td></tr>
+                  <tr><td style="color:#666">AI Status</td><td id="si-ai">—</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- LOGS -->
+    <div class="page" id="page-logs">
+      <div class="section-card">
+        <div class="section-head"><h2>Rate Limit Log</h2><button class="btn-sm-ghost" onclick="loadLogs()"><i class="bi bi-arrow-clockwise"></i> Refresh</button></div>
+        <div class="p-0">
+          <table id="dt-logs" class="table" style="width:100%">
+            <thead><tr><th>IP / Device</th><th>Requests</th><th>Plan</th><th>Window Resets</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal: Edit/Add User -->
+<div class="modal-backdrop-custom" id="user-modal">
+  <div class="modal-box">
+    <h3 id="user-modal-title">Edit User</h3>
+    <input type="hidden" id="edit-user-id"/>
+    <div class="mb-3"><label class="modal-label">Name</label><input class="form-ctrl" id="edit-name"/></div>
+    <div class="mb-3"><label class="modal-label">Email</label><input class="form-ctrl" id="edit-email" type="email"/></div>
+    <div class="mb-3">
+      <label class="modal-label">Plan</label>
+      <select class="form-ctrl" id="edit-plan">
+        <option value="free">Free</option><option value="pro">Pro</option><option value="pro_max">Pro Max</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label class="modal-label">Program</label>
+      <select class="form-ctrl" id="edit-program">
+        <option value="IB">IB</option><option value="IELTS">IELTS</option><option value="Both">Both</option>
+      </select>
+    </div>
+    <div class="mb-3" id="edit-pw-wrap">
+      <label class="modal-label">Password (leave blank to keep)</label>
+      <input class="form-ctrl" id="edit-password" type="password" placeholder="New password..."/>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm-ghost" onclick="closeModal('user-modal')">Cancel</button>
+      <button class="btn-sm-white" onclick="saveUser()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Generate Code -->
+<div class="modal-backdrop-custom" id="code-modal">
+  <div class="modal-box">
+    <h3>Generate Pro Code</h3>
+    <div class="mb-3">
+      <label class="modal-label">Plan</label>
+      <select class="form-ctrl" id="code-plan">
+        <option value="pro">Pro</option><option value="pro_max">Pro Max</option>
+      </select>
+    </div>
+    <div id="generated-code-box" style="display:none;margin-bottom:12px">
+      <label class="modal-label">Generated Code</label>
+      <div style="display:flex;gap:8px;margin-top:4px">
+        <input class="form-ctrl" id="generated-code-val" readonly/>
+        <button class="btn-sm-white" onclick="copyCode()">Copy</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm-ghost" onclick="closeModal('code-modal')">Close</button>
+      <button class="btn-sm-white" onclick="generateCode()">Generate</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- JS deps -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
+
+<script>
+const TOKEN = () => localStorage.getItem('davai_admin_token');
+
+// ── Auth check ────────────────────────────────────────────────
+(async function() {
+  if (!TOKEN()) return redirect();
+  const res = await api('GET', '/admin/api/me');
+  if (!res.ok) return redirect();
+  const d = await res.json();
+  document.getElementById('admin-username').textContent = d.username;
+  document.getElementById('admin-avatar').textContent   = d.username[0].toUpperCase();
+  loadDashboard();
+})();
+
+function redirect() { window.location.href = '/admin/login'; }
+
+function api(method, path, body) {
+  return fetch(path, {
+    method,
+    headers: { 'Content-Type': 'application/json', 'X-Admin-Token': TOKEN() },
+    body: body ? JSON.stringify(body) : undefined
+  });
+}
+
+// ── DT defaults ───────────────────────────────────────────────
+const DT_DEFAULTS = {
+  pageLength: 10,
+  lengthMenu: [10, 25, 50, 100],
+  language: { search: '', searchPlaceholder: 'Search...', lengthMenu: '_MENU_ per page', info: '_START_–_END_ of _TOTAL_', emptyTable: 'No data', zeroRecords: 'No matches' },
+  order: [],
+  autoWidth: false,
+  responsive: false,
+};
+
+let dtUsers, dtPayments, dtCodes, dtLogs;
+
+// ── Navigation ────────────────────────────────────────────────
+const PAGE_TITLES = { dashboard:'Dashboard', users:'Users', payments:'Payments', codes:'Pro Codes', site:'Site Editor', settings:'Settings', logs:'Logs' };
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.textContent.trim().toLowerCase().includes(PAGE_TITLES[name]?.toLowerCase().split(' ')[0] || name)) n.classList.add('active');
+  });
+  document.getElementById('topbar-title').textContent = PAGE_TITLES[name] || name;
+  const loaders = { users: loadUsers, payments: loadPayments, codes: loadCodes, site: loadSiteEditor, settings: loadSettings, logs: loadLogs };
+  if (loaders[name]) loaders[name]();
+}
+
+// ── Dashboard ─────────────────────────────────────────────────
+async function loadDashboard() {
+  const res = await api('GET', '/admin/api/stats');
+  if (!res.ok) return;
+  const d = await res.json();
+  document.getElementById('s-total-users').textContent       = d.total_users;
+  document.getElementById('s-pro-users').textContent         = d.pro_users;
+  document.getElementById('s-pending-payments').textContent  = d.pending_payments;
+  document.getElementById('s-today-signups').textContent     = d.today_signups;
+
+  const ru = document.getElementById('dash-recent-users');
+  ru.innerHTML = d.recent_users.length ? d.recent_users.map(u => `
+    <tr>
+      <td>${esc(u.name)}</td>
+      <td><span class="badge-pill badge-${u.plan}">${u.plan}</span></td>
+      <td><span class="badge-pill badge-${u.source||'web'}">${u.source||'web'}</span></td>
+      <td style="color:#666">${fmtDate(u.created_at)}</td>
+    </tr>`).join('') : '<tr class="empty-row"><td colspan="4">No users yet</td></tr>';
+
+  const pp = document.getElementById('dash-pending-payments');
+  pp.innerHTML = d.pending_pay.length ? d.pending_pay.map(p => `
+    <tr>
+      <td>${esc(p.sender_name)}</td>
+      <td><span class="badge-pill badge-${p.plan_id}">${p.plan_id}</span></td>
+      <td><span class="badge-pill badge-${p.source||'web'}">${p.source||'web'}</span></td>
+      <td><button class="btn-sm-white" onclick="approvePayment('${p.id}')">Approve</button></td>
+    </tr>`).join('') : '<tr class="empty-row"><td colspan="4">No pending payments</td></tr>';
+}
+
+// ── Users DataTable ───────────────────────────────────────────
+async function loadUsers() {
+  const res = await api('GET', '/admin/api/users');
+  if (!res.ok) return;
+  const users = await res.json();
+
+  if (dtUsers) { dtUsers.clear().destroy(); dtUsers = null; }
+
+  const rows = users.map(u => [
+    esc(u.name),
+    `<span style="color:#888">${esc(u.email)}</span>`,
+    `<span style="color:#888">${u.program||'—'}</span>`,
+    `<span class="badge-pill badge-${u.plan}">${u.plan}</span>`,
+    `<span class="badge-pill badge-${u.source||'web'}">${u.source||'web'}</span>`,
+    fmtDate(u.created_at),
+    u.source !== 'app'
+      ? `<div class="action-cell">
+           <button class="btn-sm-ghost" onclick='openEditUser(${JSON.stringify(u)})'>Edit</button>
+           <button class="btn-sm-red"   onclick="deleteUser('${u.id}','${esc(u.name)}')">Delete</button>
+         </div>`
+      : `<span style="color:#555;font-size:.72rem">App user</span>`,
+  ]);
+
+  dtUsers = $('#dt-users').DataTable({
+    ...DT_DEFAULTS,
+    data: rows,
+    columnDefs: [{ orderable: false, targets: 6 }],
+    order: [[5, 'desc']],
+  });
+}
+
+function openAddUser() {
+  document.getElementById('user-modal-title').textContent = 'Add User';
+  document.getElementById('edit-user-id').value = '';
+  ['edit-name','edit-email','edit-password'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('edit-plan').value = 'free';
+  document.getElementById('edit-program').value = 'IB';
+  document.getElementById('edit-pw-wrap').querySelector('label').textContent = 'Password';
+  openModal('user-modal');
+}
+
+function openEditUser(u) {
+  document.getElementById('user-modal-title').textContent = 'Edit User';
+  document.getElementById('edit-user-id').value  = u.id;
+  document.getElementById('edit-name').value     = u.name;
+  document.getElementById('edit-email').value    = u.email;
+  document.getElementById('edit-plan').value     = u.plan;
+  document.getElementById('edit-program').value  = u.program || 'IB';
+  document.getElementById('edit-password').value = '';
+  document.getElementById('edit-pw-wrap').querySelector('label').textContent = 'Password (leave blank to keep)';
+  openModal('user-modal');
+}
+
+async function saveUser() {
+  const id      = document.getElementById('edit-user-id').value;
+  const payload = {
+    name:     document.getElementById('edit-name').value.trim(),
+    email:    document.getElementById('edit-email').value.trim(),
+    plan:     document.getElementById('edit-plan').value,
+    program:  document.getElementById('edit-program').value,
+    password: document.getElementById('edit-password').value || undefined,
+  };
+  if (!payload.name || !payload.email) return toast('Name and email required.');
+  const res = id
+    ? await api('PATCH', `/admin/api/users/${id}`, payload)
+    : await api('POST',  '/admin/api/users', payload);
+  const d = await res.json();
+  if (!res.ok) return toast(d.message || 'Error');
+  closeModal('user-modal'); toast(id ? 'User updated' : 'User created'); loadUsers();
+}
+
+async function deleteUser(id, name) {
+  if (!confirm(`Delete "${name}"? Cannot be undone.`)) return;
+  const res = await api('DELETE', `/admin/api/users/${id}`);
+  if (!res.ok) return toast('Delete failed.');
+  toast('User deleted'); loadUsers();
+}
+
+// ── Payments DataTable ────────────────────────────────────────
+async function loadPayments() {
+  const filter = document.getElementById('payment-filter')?.value || '';
+  const res = await api('GET', `/admin/api/payments${filter ? '?status='+filter : ''}`);
+  if (!res.ok) return;
+  const rows_data = await res.json();
+
+  if (dtPayments) { dtPayments.clear().destroy(); dtPayments = null; }
+
+  const rows = rows_data.map(p => [
+    esc(p.sender_name),
+    `<span class="badge-pill badge-${p.plan_id}">${p.plan_id}</span>`,
+    `<span style="color:#888">${esc(p.sender_ref||'—')}</span>`,
+    `<span class="badge-pill badge-${p.status}">${p.status}</span>`,
+    `<span class="badge-pill badge-${p.source||'web'}">${p.source||'web'}</span>`,
+    fmtDate(p.created_at),
+    p.status === 'pending'
+      ? `<div class="action-cell">
+           <button class="btn-sm-white" onclick="approvePayment('${p.id}')">Approve</button>
+           <button class="btn-sm-red"   onclick="rejectPayment('${p.id}')">Reject</button>
+         </div>`
+      : '',
+  ]);
+
+  dtPayments = $('#dt-payments').DataTable({
+    ...DT_DEFAULTS,
+    data: rows,
+    columnDefs: [{ orderable: false, targets: 6 }],
+    order: [[5, 'desc']],
+  });
+}
+
+function reloadPayments() {
+  if (dtPayments) { dtPayments.clear().destroy(); dtPayments = null; }
+  loadPayments();
+}
+
+async function approvePayment(id) {
+  const res = await api('POST', `/admin/api/payments/${id}/approve`);
+  if (!res.ok) return toast('Failed to approve.');
+  toast('Approved — plan activated'); loadPayments(); loadDashboard();
+}
+
+async function rejectPayment(id) {
+  if (!confirm('Reject this payment?')) return;
+  const res = await api('POST', `/admin/api/payments/${id}/reject`);
+  if (!res.ok) return toast('Failed to reject.');
+  toast('Payment rejected'); loadPayments();
+}
+
+// ── Codes DataTable ───────────────────────────────────────────
+async function loadCodes() {
+  const res = await api('GET', '/admin/api/codes');
+  if (!res.ok) return;
+  const codes = await res.json();
+
+  if (dtCodes) { dtCodes.clear().destroy(); dtCodes = null; }
+
+  const rows = codes.map(c => [
+    `<code style="font-size:.78rem;color:#ccc">${esc(c.code)}</code>`,
+    `<span class="badge-pill badge-${c.plan}">${c.plan}</span>`,
+    fmtDate(c.created_at),
+    c.used_at ? `<span style="color:#666">${fmtDate(c.used_at)}</span>` : '<span style="color:#444">—</span>',
+    `<button class="btn-sm-red" onclick="deleteCode('${c.id}')">Delete</button>`,
+  ]);
+
+  dtCodes = $('#dt-codes').DataTable({
+    ...DT_DEFAULTS,
+    data: rows,
+    columnDefs: [{ orderable: false, targets: [0, 4] }],
+    order: [[2, 'desc']],
+  });
+}
+
+function openGenerateCode() {
+  document.getElementById('generated-code-box').style.display = 'none';
+  openModal('code-modal');
+}
+
+async function generateCode() {
+  const plan = document.getElementById('code-plan').value;
+  const res  = await api('POST', '/admin/api/codes/generate', { plan });
+  if (!res.ok) return toast('Failed to generate.');
+  const d = await res.json();
+  document.getElementById('generated-code-val').value = d.code;
+  document.getElementById('generated-code-box').style.display = 'block';
+  loadCodes();
+}
+
+function copyCode() {
+  navigator.clipboard.writeText(document.getElementById('generated-code-val').value).then(() => toast('Code copied'));
+}
+
+async function deleteCode(id) {
+  if (!confirm('Delete this code?')) return;
+  const res = await api('DELETE', `/admin/api/codes/${id}`);
+  if (!res.ok) return toast('Delete failed.');
+  toast('Code deleted'); loadCodes();
+}
+
+// ── Settings ──────────────────────────────────────────────────
+let _aiCfg = null;
+
+async function loadSettings() {
+  // System info
+  const hres = await fetch('/health');
+  if (hres.ok) {
+    const d = await hres.json();
+    document.getElementById('si-ai').textContent = d.ai ? 'Connected' : 'Not configured';
+  }
+  // AI config
+  const res = await api('GET', '/admin/api/ai-config');
+  if (!res.ok) return;
+  _aiCfg = await res.json();
+
+  document.getElementById('ai-base-url').value    = _aiCfg.base_url    || '';
+  document.getElementById('ai-api-key').value     = '';
+  document.getElementById('ai-max-tokens').value  = _aiCfg.max_tokens  || 800;
+  document.getElementById('ai-free-limit').value  = _aiCfg.free_limit  || 15;
+  document.getElementById('ai-pro-limit').value   = _aiCfg.pro_limit   || 60;
+  document.getElementById('ai-promax-limit').value= _aiCfg.promax_limit|| 150;
+  document.getElementById('ai-key-hint').textContent = _aiCfg.api_key_set
+    ? `Current key: ${_aiCfg.api_key_hint}`
+    : 'No key set';
+
+  renderModelGrid(_aiCfg.models, _aiCfg.active_model);
+}
+
+function renderModelGrid(models, active) {
+  if (!models || !models.length) return;
+  document.getElementById('model-loading').style.display = 'none';
+  const sel = document.getElementById('model-select');
+  sel.style.display = 'block';
+  sel.innerHTML = models.map(m =>
+    `<option value="${esc(m.id)}" ${m.id === active ? 'selected' : ''}>${esc(m.label)}</option>`
+  ).join('');
+  if (_aiCfg) _aiCfg._selected = sel.value;
+}
+
+function onModelSelect(id) {
+  if (_aiCfg) _aiCfg._selected = id;
+}
+
+function toggleKeyVisibility() {
+  const inp = document.getElementById('ai-api-key');
+  const btn = document.getElementById('key-eye-btn');
+  if (inp.type === 'password') {
+    inp.type = 'text';
+    btn.innerHTML = '<i class="bi bi-eye-slash"></i>';
+  } else {
+    inp.type = 'password';
+    btn.innerHTML = '<i class="bi bi-eye"></i>';
+  }
+}
+
+async function saveAIConfig() {
+  const url       = document.getElementById('ai-base-url').value.trim();
+  const key       = document.getElementById('ai-api-key').value.trim();
+  const active    = document.getElementById('model-select').value || _aiCfg?.active_model;
+  const maxTok    = parseInt(document.getElementById('ai-max-tokens').value)  || 0;
+  const freeLim   = parseInt(document.getElementById('ai-free-limit').value)  || 0;
+  const proLim    = parseInt(document.getElementById('ai-pro-limit').value)   || 0;
+  const promaxLim = parseInt(document.getElementById('ai-promax-limit').value)|| 0;
+
+  const payload = {};
+  if (url)          payload.base_url      = url;
+  if (key)          payload.api_key       = key;
+  if (active)       payload.active_model  = active;
+  if (maxTok > 0)   payload.max_tokens    = maxTok;
+  if (freeLim > 0)  payload.free_limit    = freeLim;
+  if (proLim > 0)   payload.pro_limit     = proLim;
+  if (promaxLim > 0)payload.promax_limit  = promaxLim;
+
+  if (!Object.keys(payload).length) return toast('Nothing to save.');
+
+  const res = await api('POST', '/admin/api/ai-config', payload);
+  const d   = await res.json();
+  if (!res.ok) return toast(d.message || 'Error saving config.');
+
+  const status = document.getElementById('ai-save-status');
+  status.style.display = 'inline';
+  setTimeout(() => status.style.display = 'none', 2500);
+  toast('AI config saved — Node backend will use new settings on next request.');
+  await loadSettings();
+}
+
+async function testAIConfig() {
+  const res    = document.getElementById('ai-test-result');
+  res.textContent = 'Testing...'; res.style.color = '#888';
+
+  const url = document.getElementById('ai-base-url').value.trim() || _aiCfg?.base_url;
+  const key = document.getElementById('ai-api-key').value.trim();
+
+  if (!url) { res.textContent = 'Enter a URL first.'; res.style.color = '#ff453a'; return; }
+
+  try {
+    const testRes = await fetch(`${url}/messages`, {
+      method: 'POST',
+      headers: {
+        'Content-Type':      'application/json',
+        'Authorization':     `Bearer ${key || '(current)'}`,
+        'x-api-key':         key || '(current)',
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: _aiCfg?._selected || _aiCfg?.active_model || 'claude-haiku-5-5',
+        max_tokens: 8,
+        messages: [{ role: 'user', content: 'hi' }],
+      }),
+    });
+    if (testRes.ok || testRes.status === 400) {
+      res.textContent = `Connected (HTTP ${testRes.status})`;
+      res.style.color = '#30d158';
+    } else {
+      res.textContent = `Error: HTTP ${testRes.status}`;
+      res.style.color = '#ff453a';
+    }
+  } catch (e) {
+    res.textContent = 'Could not reach URL.';
+    res.style.color = '#ff453a';
+  }
+}
+
+async function changePassword() {
+  const cur = document.getElementById('cur-pw').value;
+  const np  = document.getElementById('new-pw').value;
+  const np2 = document.getElementById('new-pw2').value;
+  if (!cur || !np) return toast('Fill all fields.');
+  if (np !== np2)  return toast('Passwords do not match.');
+  if (np.length < 8) return toast('Min. 8 characters.');
+  const res = await api('POST', '/admin/api/change-password', { current: cur, new_password: np });
+  const d = await res.json();
+  if (!res.ok) return toast(d.message || 'Error');
+  toast('Password updated');
+  ['cur-pw','new-pw','new-pw2'].forEach(id => document.getElementById(id).value = '');
+}
+
+// ── Logs DataTable ────────────────────────────────────────────
+async function loadLogs() {
+  const res = await api('GET', '/admin/api/logs');
+  if (!res.ok) return;
+  const logs = await res.json();
+
+  if (dtLogs) { dtLogs.clear().destroy(); dtLogs = null; }
+
+  const rows = logs.length ? logs.map(r => [
+    `<code style="font-size:.75rem">${esc(r.key)}</code>`,
+    r.count,
+    `<span class="badge-pill badge-${r.plan}">${r.plan}</span>`,
+    fmtDate(r.reset_at),
+  ]) : [];
+
+  dtLogs = $('#dt-logs').DataTable({
+    ...DT_DEFAULTS,
+    data: rows,
+    language: { ...DT_DEFAULTS.language, emptyTable: 'No rate limit data' },
+  });
+}
+
+// ── Site Editor ───────────────────────────────────────────────
+let _siteCfg = {};
+
+async function loadSiteEditor() {
+  const res = await api('GET', '/admin/api/site-config');
+  if (!res.ok) return;
+  _siteCfg = await res.json();
+
+  setColorField('sc-bg-base',            _siteCfg.bg_base);
+  setColorField('sc-bg-surface',         _siteCfg.bg_surface);
+  setColorField('sc-text-main',          _siteCfg.text_main);
+  setColorField('sc-text-muted',         _siteCfg.text_muted);
+  setColorField('sc-card-bg',            _siteCfg.card_bg);
+  setColorField('sc-accent',             _siteCfg.accent_color);
+  setColorField('sc-btn-primary-bg',     _siteCfg.btn_primary_bg);
+  setColorField('sc-btn-primary-color',  _siteCfg.btn_primary_color);
+  setColorField('sc-navbar-brand-bg',    _siteCfg.navbar_brand_bg);
+  setColorField('sc-navbar-brand-color', _siteCfg.navbar_brand_color);
+  setColorField('sc-btn-secondary-color',_siteCfg.btn_secondary_color);
+
+  sv('sc-btn-secondary-bg',  _siteCfg.btn_secondary_bg);
+  sv('sc-btn-primary-text',  _siteCfg.btn_primary_text);
+  sv('sc-site-title',        _siteCfg.site_title);
+  sv('sc-site-tagline',      _siteCfg.site_tagline);
+  sv('sc-hero-subtitle',     _siteCfg.hero_subtitle);
+  sv('sc-cta-title',         _siteCfg.cta_title);
+  sv('sc-cta-subtitle',      _siteCfg.cta_subtitle);
+  sv('sc-features-title',    _siteCfg.features_title);
+  sv('sc-footer-text',       _siteCfg.footer_text);
+
+  updateButtonPreviews();
+}
+
+function sv(id, val) {
+  const el = document.getElementById(id);
+  if (el && val !== undefined) el.value = val;
+}
+
+function setColorField(id, hex) {
+  if (!hex || !hex.startsWith('#')) return;
+  const picker = document.getElementById(id);
+  const textEl = document.getElementById(id + '-hex');
+  if (picker) picker.value = hex;
+  if (textEl) textEl.value = hex;
+}
+
+function bindColorPair(id) {
+  const picker = document.getElementById(id);
+  const hex    = document.getElementById(id + '-hex');
+  if (!picker || !hex) return;
+  picker.addEventListener('input', () => { hex.value = picker.value; updateButtonPreviews(); });
+  hex.addEventListener('input', () => {
+    if (/^#[0-9a-fA-F]{6}$/.test(hex.value)) { picker.value = hex.value; updateButtonPreviews(); }
+  });
+}
+
+function updateButtonPreviews() {
+  const pb = document.getElementById('sc-btn-primary-bg');
+  const pc = document.getElementById('sc-btn-primary-color');
+  const pt = document.getElementById('sc-btn-primary-text');
+  const pp = document.getElementById('btn-primary-preview');
+  if (pp) {
+    if (pb) pp.style.background = pb.value;
+    if (pc) pp.style.color = pc.value;
+    if (pt) pp.textContent = pt.value || 'Test Study Assistant';
+  }
+  const sb  = document.getElementById('sc-btn-secondary-bg');
+  const sc2 = document.getElementById('sc-btn-secondary-color');
+  const sp  = document.getElementById('btn-secondary-preview');
+  if (sp) {
+    if (sb)  sp.style.background = sb.value;
+    if (sc2) sp.style.color = sc2.value;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  ['sc-bg-base','sc-bg-surface','sc-text-main','sc-text-muted','sc-card-bg',
+   'sc-accent','sc-btn-primary-bg','sc-btn-primary-color',
+   'sc-navbar-brand-bg','sc-navbar-brand-color','sc-btn-secondary-color'].forEach(bindColorPair);
+  document.getElementById('sc-btn-primary-text')?.addEventListener('input', updateButtonPreviews);
+  document.getElementById('sc-btn-secondary-bg')?.addEventListener('input', updateButtonPreviews);
+});
+
+function gv(id)  { return document.getElementById(id)?.value?.trim() || ''; }
+function gcv(id) {
+  const h = document.getElementById(id + '-hex');
+  if (h && /^#[0-9a-fA-F]{6}$/.test(h.value)) return h.value;
+  const p = document.getElementById(id);
+  return p ? p.value : '';
+}
+
+async function saveSiteConfig() {
+  const payload = {
+    bg_base:             gcv('sc-bg-base'),
+    bg_surface:          gcv('sc-bg-surface'),
+    text_main:           gcv('sc-text-main'),
+    text_muted:          gcv('sc-text-muted'),
+    card_bg:             gcv('sc-card-bg'),
+    accent_color:        gcv('sc-accent'),
+    btn_primary_bg:      gcv('sc-btn-primary-bg'),
+    btn_primary_color:   gcv('sc-btn-primary-color'),
+    btn_primary_text:    gv('sc-btn-primary-text'),
+    btn_secondary_bg:    gv('sc-btn-secondary-bg'),
+    btn_secondary_color: gcv('sc-btn-secondary-color'),
+    navbar_brand_bg:     gcv('sc-navbar-brand-bg'),
+    navbar_brand_color:  gcv('sc-navbar-brand-color'),
+    site_title:          gv('sc-site-title'),
+    site_tagline:        gv('sc-site-tagline'),
+    hero_subtitle:       gv('sc-hero-subtitle'),
+    cta_title:           gv('sc-cta-title'),
+    cta_subtitle:        gv('sc-cta-subtitle'),
+    features_title:      gv('sc-features-title'),
+    footer_text:         gv('sc-footer-text'),
+  };
+  Object.keys(payload).forEach(k => { if (!payload[k]) delete payload[k]; });
+  const res = await api('POST', '/admin/api/site-config', payload);
+  const d   = await res.json();
+  if (!res.ok) return toast(d.message || 'Error');
+  const st = document.getElementById('site-save-status');
+  st.style.display = 'inline'; setTimeout(() => st.style.display = 'none', 3000);
+  toast(`Saved ${d.updated} settings — reload site to apply`);
+}
+
+async function resetSiteConfig() {
+  if (!confirm('Reset all site settings to defaults?')) return;
+  await api('POST', '/admin/api/site-config', { _reset: '1' });
+  await loadSiteEditor();
+  toast('Reset to defaults');
+}
+
+// ── Logout ────────────────────────────────────────────────────
+function doLogout() { localStorage.removeItem('davai_admin_token'); window.location.href = '/admin/login'; }
+
+// ── Modals ────────────────────────────────────────────────────
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-backdrop-custom').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+
+// ── Toast ─────────────────────────────────────────────────────
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// ── Helpers ───────────────────────────────────────────────────
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmtDate(s) {
+  if (!s) return '—';
+  return new Date(s).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+  <title>DAVAI — Study Platform for IB Diploma & IELTS</title>
+  <meta name="description" content="Focused study companion for IB Diploma and IELTS students. Structured criteria guidance, essay outlines, homework tracking, and vocabulary."/>
+  <meta name="theme-color" content="#000000"/>
+
+  <!-- PWA & Favicons -->
+  <link rel="manifest" href="/manifest.json"/>
+  <link rel="apple-touch-icon" href="/assets/icon-192.png"/>
+  <link rel="icon" href="/favicon.ico" sizes="48x48"/>
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/icon-192.png"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png"/>
+
+  <!-- Bootstrap 5.3 CSS -->
+  <link rel="stylesheet" href="/assets/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"/>
+
+  <!-- Google Font: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root {
+      --bg-base: #000000;
+      --bg-surface: #0e0e11;
+      --bg-surface-hover: #15151a;
+      --bg-input: #09090b;
+      --text-main: #ffffff;
+      --text-muted: #a1a1aa;
+      --text-subtle: #71717a;
+    }
+
+    html, body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* Buttons */
+    .btn-brand {
+      background-color: #ffffff;
+      border: none;
+      color: #000000;
+      font-weight: 600;
+      font-size: 0.92rem;
+      padding: 0.65rem 1.35rem;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: background-color 0.15s ease, opacity 0.15s ease;
+      white-space: nowrap;
+    }
+    .btn-brand:hover, .btn-brand:focus {
+      background-color: #e4e4e7;
+      color: #000000;
+    }
+
+    .btn-secondary-dark {
+      background-color: rgba(255, 255, 255, 0.08);
+      border: none;
+      color: #ffffff;
+      font-weight: 500;
+      font-size: 0.92rem;
+      padding: 0.65rem 1.35rem;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: background-color 0.15s ease, color 0.15s ease;
+      white-space: nowrap;
+    }
+    .btn-secondary-dark:hover, .btn-secondary-dark:focus {
+      background-color: rgba(255, 255, 255, 0.14);
+      color: #ffffff;
+    }
+
+    /* Navbar - Transparent & Borderless */
+    .navbar {
+      background-color: transparent !important;
+      border-bottom: none !important;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      z-index: 30;
+      padding: 1.25rem 0;
+    }
+    .nav-link {
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 0.9rem;
+      padding: 0.5rem 0.85rem !important;
+      transition: color 0.15s ease;
+    }
+    .nav-link:hover, .nav-link:focus {
+      color: var(--text-main);
+    }
+
+    .brand-logo-wrap {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      background-color: #ffffff;
+      border-radius: 7px;
+      color: #000000;
+    }
+
+    @media (max-width: 991.98px) {
+      .navbar-collapse {
+        background-color: rgba(14, 14, 17, 0.96);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: none;
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-top: 0.75rem;
+      }
+    }
+
+    /* Hero Section with Clearly Visible Video Background */
+    .hero-container-wrap {
+      position: relative;
+      overflow: hidden;
+      padding: 8.5rem 0 5.5rem;
+      background-color: var(--bg-base);
+    }
+    .hero-bg-video-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .hero-bg-video {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      transform: translate(-50%, -50%);
+      object-fit: cover;
+      opacity: 0.75;
+    }
+    .hero-bg-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.45) 0%,
+        rgba(0, 0, 0, 0.55) 60%,
+        rgba(0, 0, 0, 0.96) 100%
+      );
+      z-index: 2;
+    }
+    .hero-content-inner {
+      position: relative;
+      z-index: 3;
+    }
+
+    /* Minimalist Cards - No harsh borders */
+    .card-dark {
+      background-color: var(--bg-surface);
+      border: none;
+      border-radius: 12px;
+      padding: 1.6rem;
+      height: 100%;
+      transition: background-color 0.15s ease, transform 0.15s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .card-dark:hover {
+      background-color: var(--bg-surface-hover);
+    }
+
+    .icon-container {
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      background-color: rgba(255, 255, 255, 0.08);
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      margin-bottom: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .section-divider {
+      background-color: #060608;
+    }
+
+    /* Assistant Card - Clean & Borderless */
+    .assistant-card {
+      background-color: var(--bg-surface);
+      border: none;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .assistant-history {
+      background-color: #070709;
+      height: 350px;
+      overflow-y: auto;
+      padding: 1.35rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+    .assistant-bubble {
+      max-width: 85%;
+      padding: 0.8rem 1.1rem;
+      font-size: 0.92rem;
+      line-height: 1.55;
+      border-radius: 10px;
+    }
+    .bubble-user {
+      align-self: flex-end;
+      background-color: #27272a;
+      color: #ffffff;
+    }
+    .bubble-assistant {
+      align-self: flex-start;
+      background-color: var(--bg-surface);
+      color: var(--text-main);
+    }
+
+    .prompt-chip {
+      background-color: rgba(255, 255, 255, 0.06);
+      border: none;
+      color: #d4d4d8;
+      font-size: 0.82rem;
+      font-weight: 500;
+      padding: 0.4rem 0.9rem;
+      border-radius: 20px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: background-color 0.15s ease, color 0.15s ease;
+      white-space: nowrap;
+    }
+    .prompt-chip:hover {
+      color: #ffffff;
+      background-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .form-control-dark {
+      border: none;
+      background-color: var(--bg-input);
+      color: var(--text-main);
+      font-size: 0.92rem;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+    }
+    .form-control-dark:focus {
+      background-color: #111114;
+      color: var(--text-main);
+      box-shadow: none;
+      outline: none;
+    }
+
+    /* Accordion in Minimalist Dark */
+    .accordion-item {
+      background-color: var(--bg-surface);
+      border: none !important;
+      margin-bottom: 0.6rem;
+      border-radius: 10px !important;
+      overflow: hidden;
+    }
+    .accordion-button {
+      background-color: var(--bg-surface);
+      color: var(--text-main);
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 1.15rem 1.35rem;
+      box-shadow: none !important;
+      border: none !important;
+    }
+    .accordion-button:not(.collapsed) {
+      background-color: var(--bg-surface-hover);
+      color: #ffffff;
+    }
+    .accordion-button::after {
+      filter: invert(1);
+    }
+    .accordion-body {
+      background-color: var(--bg-surface);
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      padding: 1.15rem 1.35rem 1.35rem;
+      line-height: 1.6;
+    }
+
+    /* Modal Dark */
+    .modal-content-dark {
+      background-color: #0e0e11;
+      border: none;
+      color: var(--text-main);
+      border-radius: 14px;
+    }
+
+    footer {
+      background-color: var(--bg-base);
+      color: var(--text-subtle);
+      font-size: 0.88rem;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 575.98px) {
+      .hero-container-wrap {
+        padding: 6.5rem 0 3.5rem;
+      }
+      .display-6 {
+        font-size: 1.75rem;
+      }
+      .assistant-history {
+        height: 290px;
+      }
+    }
+  /* ── App store badges ──────────────────────── */
+  .store-badge img {
+    filter: grayscale(1) brightness(.7);
+    transition: filter .2s ease;
+  }
+  .store-badge:hover img {
+    filter: grayscale(0) brightness(1);
+  }
+ </style>
+</head>
+<body>
+
+  <!-- Top Navigation (Transparent & Borderless) -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2 text-white fw-bold fs-5" href="/">
+        <div class="brand-logo-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+          </svg>
+        </div>
+        <span>DAVAI</span>
+      </a>
+
+      <button class="navbar-toggler border-0 shadow-none text-white p-1" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-lg-1">
+          <li class="nav-item">
+            <a class="nav-link" href="#features" onclick="closeNav()">Tools</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#assistant" onclick="closeNav()">Assistant</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#integrity" onclick="closeNav()">Academic Integrity</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#about" onclick="closeNav()">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#faq" onclick="closeNav()">FAQ</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/podcasts">Podcasts</a>
+          </li>
+
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section with Background Video -->
+  <header class="hero-container-wrap">
+    <!-- Ambient Background Video (Study / Library) -->
+    <div class="hero-bg-video-wrapper" aria-hidden="true">
+      <video class="hero-bg-video" autoplay muted loop playsinline preload="auto">
+        <source src="/assets/videos/hero-study.mp4" type="video/mp4"/>
+        <source src="https://assets.mixkit.co/videos/14734/14734-720.mp4" type="video/mp4"/>
+      </video>
+      <div class="hero-bg-overlay"></div>
+    </div>
+
+    <div class="container hero-content-inner text-center">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <h1 class="display-6 fw-bold mb-3 text-white" style="letter-spacing: -0.02em;">
+            Study companion for IB Diploma and IELTS students.
+          </h1>
+          <p class="lead mb-4 fs-6" style="color: var(--text-muted); max-width: 620px; margin-left: auto; margin-right: auto;">
+            Structured criteria guidance, essay outlines, homework tracking, and vocabulary. Designed for independent learning without commercial subscriptions.
+          </p>
+
+          <div class="d-flex flex-column flex-sm-row justify-content-center align-items-center gap-3 mb-5">
+            <a class="store-badge" href="#" aria-label="Download on the App Store">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="Download on the App Store" height="36" style="display:block"/>
+            </a>
+            <a class="store-badge" href="#" aria-label="Get it on Google Play">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/1280px-Google_Play_Store_badge_EN.svg.png" alt="Get it on Google Play" height="36" style="display:block"/>
+            </a>
+          </div>
+          <div class="d-flex flex-column flex-sm-row justify-content-center gap-2 mb-3">
+            <button onclick="scrollToAssistant()" class="btn btn-secondary-dark">
+              <span>Test Study Assistant</span>
+            </button>
+            <a href="/podcasts" class="btn btn-secondary-dark">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+              <span>Study Podcasts</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Core Pillars with Clean Vector Icons -->
+      <div class="row row-cols-2 row-cols-md-4 g-3 pt-4">
+        <div class="col text-center">
+          <div class="d-flex align-items-center justify-content-center gap-2 mb-1">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            <span class="fw-semibold text-white small">No Account Required</span>
+          </div>
+
+        </div>
+        <div class="col text-center">
+          <div class="d-flex align-items-center justify-content-center gap-2 mb-1">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            <span class="fw-semibold text-white small">IB & IELTS Focus</span>
+          </div>
+          <div class="small" style="color: var(--text-subtle); font-size: 0.78rem;">Official rubric awareness</div>
+        </div>
+        <div class="col text-center">
+          <div class="d-flex align-items-center justify-content-center gap-2 mb-1">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            <span class="fw-semibold text-white small">Academic Integrity</span>
+          </div>
+          <div class="small" style="color: var(--text-subtle); font-size: 0.78rem;">Guiding feedback, no ghostwriting</div>
+        </div>
+        <div class="col text-center">
+          <div class="d-flex align-items-center justify-content-center gap-2 mb-1">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <span class="fw-semibold text-white small">Private & Local</span>
+          </div>
+          <div class="small" style="color: var(--text-subtle); font-size: 0.78rem;">Data stays on your device</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Interactive Assistant Section -->
+  <section id="assistant" class="py-5 section-divider">
+    <div class="container py-2">
+      <div class="row justify-content-center text-center mb-4">
+        <div class="col-lg-7">
+          <h2 class="h4 fw-bold mb-2 text-white">Interactive Study Assistant</h2>
+          <p class="small mb-0" style="color: var(--text-muted);">
+            Ask questions regarding essay structure, mark schemes, and vocabulary. Select a suggested topic below or type your own question.
+          </p>
+        </div>
+      </div>
+
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="assistant-card">
+            
+            <!-- Quick Prompts Toolbar -->
+            <div class="p-3" style="background-color: var(--bg-surface);">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <div class="small fw-medium d-flex align-items-center gap-2" style="color: var(--text-subtle);">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                  <span>Suggested prompts:</span>
+                </div>
+                <button type="button" class="btn btn-sm text-secondary p-0 border-0" onclick="clearChat()" title="Reset chat" style="font-size: 0.8rem;">
+                  Clear conversation
+                </button>
+              </div>
+              <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="prompt-chip" onclick="askPreset('How should I structure a 1,600-word TOK essay?')">
+                  TOK Essay Framework
+                </button>
+                <button type="button" class="prompt-chip" onclick="askPreset('What differentiates Band 6.5 from Band 7 in IELTS Writing Task 2?')">
+                  IELTS Band 7 Rubric
+                </button>
+                <button type="button" class="prompt-chip" onclick="askPreset('How can I narrow down an Extended Essay research question?')">
+                  EE Research Question
+                </button>
+                <button type="button" class="prompt-chip" onclick="askPreset('Provide 5 precise academic collocations for analytical essays.')">
+                  Academic Collocations
+                </button>
+              </div>
+            </div>
+
+            <!-- Messages Window -->
+            <div class="assistant-history" id="chatHistory">
+              <div class="assistant-bubble bubble-assistant">
+                <strong>DAVAI Study Assistant</strong><br/>
+                Enter a question about TOK, Extended Essay guidelines, IA requirements, or IELTS writing rubrics.
+              </div>
+            </div>
+
+            <!-- Input Bar -->
+            <div class="p-3" style="background-color: var(--bg-surface);">
+              <form onsubmit="handleChatSubmit(event)">
+                <div class="input-group">
+                  <input type="text" id="chatInput" class="form-control form-control-dark" placeholder="Type your study question..." autocomplete="off"/>
+                  <button class="btn btn-brand" type="submit" id="chatSubmitBtn">
+                    <span>Submit</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                  </button>
+                </div>
+              </form>
+              <div class="mt-2 small text-center" style="font-size: 0.78rem; color: var(--text-subtle);">
+                Note: Responses provide analytical outlines and criteria explanations. DAVAI does not generate student assignments.
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Grid with Sharp Vector Icons -->
+  <section id="features" class="py-5">
+    <div class="container py-3">
+      <div class="row justify-content-center text-center mb-4">
+        <div class="col-lg-7">
+          <h2 class="h4 fw-bold mb-2 text-white">Core Study Capabilities</h2>
+          <p class="small mb-0" style="color: var(--text-muted);">
+            Tools built specifically for the day-to-day requirements of IB Diploma and English language exams.
+          </p>
+        </div>
+      </div>
+
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+        
+        <!-- Tool 1 -->
+        <div class="col">
+          <div class="card-dark">
+            <div class="icon-container">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+              </svg>
+            </div>
+            <h6 class="fw-bold mb-2 text-white">IB Diploma Mentorship</h6>
+            <p class="small mb-3" style="color: var(--text-muted); flex-grow: 1;">
+              Frameworks for TOK essay planning, Extended Essay structure, and subject Internal Assessment (IA) mark scheme breakdowns.
+            </p>
+            <button onclick="askPreset('Explain the official IB TOK essay assessment criteria')" class="btn btn-secondary-dark btn-sm w-100 justify-content-between">
+              <span>Explore TOK guidance</span>
+              <span>→</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Tool 2 -->
+        <div class="col">
+          <div class="card-dark">
+            <div class="icon-container">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+              </svg>
+            </div>
+            <h6 class="fw-bold mb-2 text-white">IELTS Writing & Speaking</h6>
+            <p class="small mb-3" style="color: var(--text-muted); flex-grow: 1;">
+              Techniques for Task 1 report summaries and Task 2 argument coherence, lexical resource targets, and time-allocation strategies.
+            </p>
+            <button onclick="askPreset('Give me a high-scoring template for IELTS Writing Task 2')" class="btn btn-secondary-dark btn-sm w-100 justify-content-between">
+              <span>View Task 2 strategy</span>
+              <span>→</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Tool 3 -->
+        <div class="col">
+          <div class="card-dark">
+            <div class="icon-container">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+                <path d="m9 16 2 2 4-4"/>
+              </svg>
+            </div>
+            <h6 class="fw-bold mb-2 text-white">Deadline & Homework Manager</h6>
+            <p class="small mb-3" style="color: var(--text-muted); flex-grow: 1;">
+              Organize daily coursework, internal assessment drafts, and revision sessions in an offline-ready checklist.
+            </p>
+            <div class="d-flex gap-2 align-items-center mt-1">
+              <a class="store-badge" href="#" aria-label="App Store">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="Download on the App Store" height="36" style="display:block"/>
+              </a>
+              <a class="store-badge" href="#" aria-label="Google Play">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/1280px-Google_Play_Store_badge_EN.svg.png" alt="Get it on Google Play" height="36" style="display:block"/>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tool 4 -->
+        <div class="col">
+          <div class="card-dark">
+            <div class="icon-container">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+              </svg>
+            </div>
+            <h6 class="fw-bold mb-2 text-white">Academic Vocabulary</h6>
+            <p class="small mb-3" style="color: var(--text-muted); flex-grow: 1;">
+              Focused daily academic collocations and transitional phrases designed to enhance clarity in formal analytical writing.
+            </p>
+            <button onclick="askPreset('Provide 5 advanced vocabulary collocations with sample sentences')" class="btn btn-secondary-dark btn-sm w-100 justify-content-between">
+              <span>Practice vocabulary</span>
+              <span>→</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Tool 5 -->
+        <div class="col">
+          <div class="card-dark">
+            <div class="icon-container">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 18v-6a9 9 0 0 1 18 0v6"/>
+                <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>
+              </svg>
+            </div>
+            <h6 class="fw-bold mb-2 text-white">Revision Sessions & Podcasts</h6>
+            <p class="small mb-3" style="color: var(--text-muted); flex-grow: 1;">
+              Curated evidence-based study methods, active recall protocols, and topic deep-dives available without algorithmic distractions.
+            </p>
+            <a href="/podcasts" class="btn btn-secondary-dark btn-sm w-100 justify-content-between">
+              <span>Browse study sessions</span>
+              <span>→</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Tool 6 -->
+        <div class="col">
+          <div class="card-dark">
+            <div class="icon-container">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="12" x2="2" y2="12"/>
+                <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>
+                <line x1="6" y1="16" x2="6.01" y2="16"/>
+                <line x1="10" y1="16" x2="10.01" y2="16"/>
+              </svg>
+            </div>
+            <h6 class="fw-bold mb-2 text-white">Local Storage Security</h6>
+            <p class="small mb-3" style="color: var(--text-muted); flex-grow: 1;">
+              Your tasks, notes, and preferences remain stored directly in your browser's local memory. No centralized database retention.
+            </p>
+            <a href="/privacy" class="btn btn-secondary-dark btn-sm w-100 justify-content-between">
+              <span>Read privacy guarantee</span>
+              <span>→</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Academic Integrity Principle -->
+  <section id="integrity" class="py-5 section-divider">
+    <div class="container py-2">
+      <div class="row align-items-center g-4">
+        
+        <div class="col-lg-6">
+          <h2 class="h4 fw-bold mb-3 text-white">Academic Integrity Standard</h2>
+          <p class="small mb-3" style="color: var(--text-muted);">
+            The International Baccalaureate (IB) and IELTS assess a student’s own critical reasoning. Relying on generative models to write assignments leads to academic penalties and fails to develop genuine analytical competence.
+          </p>
+          <p class="small mb-0" style="color: var(--text-muted);">
+            DAVAI operates strictly as a revision coach: it prompts you with counter-arguments, highlights gaps in structure, and clarifies rubrics so you write your own work with confidence.
+          </p>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="p-4 rounded-4" style="background-color: var(--bg-surface);">
+            <h6 class="fw-bold mb-3 text-white">Platform Commitments:</h6>
+            <ul class="list-unstyled small mb-0 d-flex flex-column gap-3" style="color: var(--text-muted);">
+              <li class="d-flex align-items-start gap-3">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0 mt-1"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span><strong class="text-white">No Essay Generation:</strong> Outlines, research frameworks, and criteria feedback only.</span>
+              </li>
+              <li class="d-flex align-items-start gap-3">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0 mt-1"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span><strong class="text-white">Examiner Criteria:</strong> Aligns responses to official TOK, EE, and IELTS assessment strands.</span>
+              </li>
+              <li class="d-flex align-items-start gap-3">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0 mt-1"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span><strong class="text-white">Independent Work:</strong> Encourages source evaluation and student-led argumentation.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="py-5">
+    <div class="container py-2">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="p-4 p-md-5 rounded-4" style="background-color: var(--bg-surface);">
+            <h2 class="h5 fw-bold mb-3 text-white">About the Project</h2>
+            <p class="small mb-3" style="color: var(--text-muted);">
+              DAVAI was initiated by David Salahov, an IB Diploma student at School No. 6 in Baku.
+            </p>
+            <p class="small mb-3" style="color: var(--text-muted);">
+              During preparation for the IB Diploma and IELTS, it became evident that personalized feedback tools and revision platforms frequently carry substantial subscription fees that are inaccessible to many students.
+            </p>
+            <p class="small mb-4" style="color: var(--text-muted);">
+              DAVAI was built to provide straightforward, criteria-aligned revision support without commercial paywalls or data profiling.
+            </p>
+
+            <div class="d-flex flex-wrap gap-2 pt-3">
+              <button class="btn btn-secondary-dark btn-sm" onclick="openContactModal()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                <span>Send a message</span>
+              </button>
+              <a href="mailto:davai.salahov@gmail.com" class="btn btn-secondary-dark btn-sm">
+                davai.salahov@gmail.com
+              </a>
+              <a href="https://instagram.com/davai.tech" target="_blank" class="btn btn-secondary-dark btn-sm">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                <span>@davai.tech</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq" class="py-5 section-divider">
+    <div class="container py-2">
+      <div class="row justify-content-center text-center mb-4">
+        <div class="col-lg-7">
+          <h2 class="h4 fw-bold mb-2 text-white">Frequently Asked Questions</h2>
+          <p class="small mb-0" style="color: var(--text-muted);">
+            Common questions regarding access, privacy, and coursework usage.
+          </p>
+        </div>
+      </div>
+
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="accordion" id="faqAccordion">
+
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#f1" aria-expanded="false" aria-controls="f1">
+                  Is DAVAI free to use?
+                </button>
+              </h2>
+              <div id="f1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  Yes. DAVAI is fully free. There are no fees, paid tiers, or account requirements.
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#f2" aria-expanded="false" aria-controls="f2">
+                  Does this comply with school academic policies?
+                </button>
+              </h2>
+              <div id="f2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  Yes. The assistant is structured to provide guidance on organization, criteria explanation, and analytical questions. It does not write essays for students.
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#f3" aria-expanded="false" aria-controls="f3">
+                  How does the Student App work?
+                </button>
+              </h2>
+              <div id="f3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  The Student App is the dedicated study workspace containing task tracking, revision timers, and vocabulary modules that persist in your browser’s local storage.
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#f4" aria-expanded="false" aria-controls="f4">
+                  Where is my data stored?
+                </button>
+              </h2>
+              <div id="f4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  Your deadlines and notes are stored locally in your browser. No personal profiles are created on remote servers.
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bottom CTA -->
+  <section class="py-5 text-center">
+    <div class="container py-2">
+      <h3 class="h4 fw-bold mb-2 text-white">Begin Your Study Session</h3>
+      <p class="small mb-4" style="color: var(--text-muted);">
+        Access the homework tracker, revision tools, and vocabulary assistant.
+      </p>
+      <div class="d-flex justify-content-center align-items-center gap-3 flex-wrap">
+        <a class="store-badge" href="#" aria-label="Download on the App Store">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="Download on the App Store" height="36" style="display:block"/>
+        </a>
+        <a class="store-badge" href="#" aria-label="Get it on Google Play">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/1280px-Google_Play_Store_badge_EN.svg.png" alt="Get it on Google Play" height="36" style="display:block"/>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Clean Footer -->
+  <footer class="py-4">
+    <div class="container">
+      <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
+        <div class="fw-semibold text-white d-flex align-items-center gap-2">
+          <span>DAVAI</span>
+          <span class="fw-normal" style="color: var(--text-subtle);">© 2026</span>
+        </div>
+
+        <div class="d-flex flex-wrap align-items-center justify-content-center gap-3 small">
+          <a href="/podcasts" class="text-secondary">Podcasts</a>
+          <a href="/privacy" class="text-secondary">Privacy</a>
+          <a href="https://instagram.com/davai.tech" target="_blank" class="text-secondary">Instagram</a>
+          <a href="mailto:davai.salahov@gmail.com" class="text-secondary">Contact</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Contact Modal -->
+  <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content modal-content-dark">
+        <div class="modal-header border-bottom" style="border-color: rgba(255, 255, 255, 0.08) !important;">
+          <h5 class="modal-title fs-6 fw-bold" id="contactModalLabel">Send a Note to David</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="contactForm" onsubmit="handleContactSubmit(event)">
+            <div class="mb-3">
+              <label for="contactEmail" class="form-label small text-muted">Your email (optional):</label>
+              <input type="email" class="form-control form-control-dark" id="contactEmail" placeholder="student@example.com">
+            </div>
+            <div class="mb-3">
+              <label for="contactMessage" class="form-label small text-muted">Message or feedback:</label>
+              <textarea class="form-control form-control-dark" id="contactMessage" rows="4" placeholder="Suggestions, IB questions, or notes..." required></textarea>
+            </div>
+            <div class="d-flex justify-content-end gap-2">
+              <button type="button" class="btn btn-secondary-dark btn-sm" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-brand btn-sm" id="contactSendBtn">Send Message</button>
+            </div>
+          </form>
+          <div id="contactSuccessMsg" class="alert alert-success mt-3 py-2 small d-none" role="alert">
+            Thank you! Your note has been received.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5.3 JS -->
+  <script src="/assets/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Comprehensive Study Assistant & Interactive Scripts -->
+  <script>
+    const AI_PROXY_URL = '/v1/messages';
+
+    // Comprehensive Academic Knowledge Base (Handles offline or instant responses)
+    const KNOWLEDGE_BASE = [
+      {
+        match: /tok|theory of knowledge|essay structure/i,
+        answer: "TOK Essay Structure (1,600 words max):\n\n1. Introduction (~150 words): Unpack the prescribed title, clarify key terms in context, identify the Knowledge Question, and provide a clear thesis roadmap.\n2. Area of Knowledge 1 (~600 words): First perspective with real-world situation evidence, followed by counter-claim and evaluation.\n3. Area of Knowledge 2 (~600 words): Contrasting AoK with evidence, counter-perspective, and comparative evaluation.\n4. Conclusion (~200 words): Synthesize insights, address implications of your thesis, and state limitations."
+      },
+      {
+        match: /criteria|rubric|examiner/i,
+        answer: "Official Assessment Criteria Overview:\n\n• TOK Essay: Criterion A (Focus on Knowledge Questions - 4 pts), Criterion B (Quality of Analysis & Real-World Examples - 6 pts).\n• IELTS Writing Task 2: Task Achievement (25%), Coherence and Cohesion (25%), Lexical Resource (25%), Grammatical Range and Accuracy (25%).\n• Extended Essay: Focus & Method (Criterion A), Knowledge & Understanding (Criterion B), Critical Thinking (Criterion C), Presentation (Criterion D), Engagement (Criterion E - RPPF form)."
+      },
+      {
+        match: /ielts|band 7|task 2|writing task/i,
+        answer: "Key distinctions for IELTS Band 7+ in Writing Task 2:\n\n• Task Response: Present a clear, developed position from introduction to conclusion without self-contradiction.\n• Cohesion: Maintain clear paragraph progression with logical referents rather than overusing formulaic transition markers.\n• Lexical Resource: Accurate use of academic collocations with minimal precision errors.\n• Grammatical Accuracy: A mix of complex sentences with high clause accuracy."
+      },
+      {
+        match: /extended essay|ee|research question/i,
+        answer: "Effective Extended Essay research questions must be focused, analytical, and manageable within 4,000 words:\n\n• Avoid purely descriptive questions ('What was the impact of X?').\n• Formulate evaluative questions ('To what extent did factor X influence outcome Y within period Z?').\n• Ensure accessibility of primary and reputable secondary sources."
+      },
+      {
+        match: /collocation|vocabulary|academic|words/i,
+        answer: "Recommended academic collocations for analytical writing:\n\n1. Substantiate an argument (provide empirical support)\n2. Reconcile conflicting perspectives (address theoretical tension)\n3. Inherent constraint (methodological limitation)\n4. Disproportionate impact (unequal outcome distribution)\n5. Far-reaching implications (broader theoretical consequence)"
+      },
+      {
+        match: /ia|internal assessment|math|physics|biology|chemistry/i,
+        answer: "Internal Assessment (IA) Success Checklist:\n\n• Personal Engagement: Explain why you chose this investigation without fabricating elaborate stories.\n• Exploration: Well-defined methodology, controlled variables, and thorough safety/ethics review.\n• Analysis: Raw data table, processed data, uncertainty propagation, and appropriate graphing.\n• Evaluation: Discuss realistic methodological weaknesses and suggest verifiable improvements."
+      },
+      {
+        match: /schedule|study plan|revision|time/i,
+        answer: "Recommended Study Block Protocol:\n\n• Focus Interval: 50 minutes deep study + 10 minutes screen-free break.\n• Priority Order: High-cognitive analytical writing (TOK/EE) first, followed by practice problems, ending with flashcards/vocabulary.\n• Tracker: You can add and monitor your deadlines in the Student App (/app)."
+      }
+    ];
+
+    function closeNav() {
+      const navCollapse = document.getElementById('mainNav');
+      if (navCollapse && navCollapse.classList.contains('show')) {
+        const bsCollapse = bootstrap.Collapse.getInstance(navCollapse) || new bootstrap.Collapse(navCollapse);
+        bsCollapse.hide();
+      }
+    }
+
+    function scrollToAssistant() {
+      const el = document.getElementById('assistant');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+        setTimeout(() => {
+          const input = document.getElementById('chatInput');
+          if (input) input.focus();
+        }, 600);
+      }
+    }
+
+    function clearChat() {
+      const history = document.getElementById('chatHistory');
+      history.innerHTML = `
+        <div class="assistant-bubble bubble-assistant">
+          <strong>DAVAI Study Assistant</strong><br/>
+          Conversation cleared. Enter a question about TOK, Extended Essay guidelines, IA requirements, or IELTS writing rubrics.
+        </div>
+      `;
+    }
+
+    function appendMessage(sender, text) {
+      const history = document.getElementById('chatHistory');
+      const bubble = document.createElement('div');
+      bubble.className = 'assistant-bubble ' + (sender === 'user' ? 'bubble-user' : 'bubble-assistant');
+      bubble.style.whiteSpace = 'pre-line';
+      bubble.textContent = text;
+      history.appendChild(bubble);
+      history.scrollTop = history.scrollHeight;
+      return bubble;
+    }
+
+    async function submitQuestion(questionText) {
+      const q = questionText.trim();
+      if (!q) return;
+
+      const input = document.getElementById('chatInput');
+      const btn = document.getElementById('chatSubmitBtn');
+
+      appendMessage('user', q);
+      input.value = '';
+      input.disabled = true;
+      btn.disabled = true;
+
+      const loadingMsg = appendMessage('ai', 'Evaluating criteria...');
+
+      let responseText = null;
+
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 12000);
+
+        const res = await fetch(AI_PROXY_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'claude-haiku-5-5',
+            max_tokens: 350,
+            system: 'You are DAVAI, an academic mentor for IB Diploma and IELTS students. Provide structured, criteria-aligned guidance. Do not write full student essays. Maintain an objective, educational tone.',
+            messages: [{ role: 'user', content: q }]
+          }),
+          signal: controller.signal
+        });
+
+        clearTimeout(timeout);
+
+        if (res.ok) {
+          const data = await res.json();
+          responseText = data?.content?.[0]?.text || null;
+        }
+      } catch (err) {}
+
+      loadingMsg.remove();
+
+      if (!responseText) {
+        const match = KNOWLEDGE_BASE.find(item => item.match.test(q));
+        responseText = match 
+          ? match.answer 
+          : "For this topic, examine your official syllabus criteria guide and break down your argument into clear premises with empirical evidence.\n\nYou can also launch the Student App (/app) to record this milestone in your homework manager.";
+      }
+
+      appendMessage('ai', responseText);
+      input.disabled = false;
+      btn.disabled = false;
+      input.focus();
+    }
+
+    function handleChatSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('chatInput');
+      submitQuestion(input.value);
+    }
+
+    function askPreset(text) {
+      scrollToAssistant();
+      submitQuestion(text);
+    }
+
+    // Contact Modal handler
+    let contactModalInstance = null;
+    function openContactModal() {
+      const el = document.getElementById('contactModal');
+      if (el) {
+        contactModalInstance = new bootstrap.Modal(el);
+        contactModalInstance.show();
+      }
+    }
+
+    function handleContactSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('contactSendBtn');
+      const email = document.getElementById('contactEmail').value.trim();
+      const msg = document.getElementById('contactMessage').value.trim();
+      const successMsg = document.getElementById('contactSuccessMsg');
+
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+
+      // Save locally & trigger success
+      try {
+        const existing = JSON.parse(localStorage.getItem('davai_messages') || '[]');
+        existing.push({ email, message: msg, date: new Date().toISOString() });
+        localStorage.setItem('davai_messages', JSON.stringify(existing));
+      } catch (err) {}
+
+      setTimeout(() => {
+        btn.textContent = 'Sent';
+        successMsg.classList.remove('d-none');
+        setTimeout(() => {
+          if (contactModalInstance) contactModalInstance.hide();
+          e.target.reset();
+          btn.disabled = false;
+          btn.textContent = 'Send Message';
+          successMsg.classList.add('d-none');
+        }, 1500);
+      }, 600);
+    }
+  </script>
+<script>
+(async function applySiteConfig() {
+  try {
+    const res = await fetch('/site-config.json');
+    if (!res.ok) return;
+    const c = await res.json();
+    const r = document.documentElement.style;
+    if (c.bg_base)    r.setProperty('--bg-base',    c.bg_base);
+    if (c.bg_surface) r.setProperty('--bg-surface',  c.bg_surface);
+    if (c.text_main)  r.setProperty('--text-main',   c.text_main);
+    if (c.text_muted) r.setProperty('--text-muted',  c.text_muted);
+    if (c.card_bg)    r.setProperty('--bg-surface',  c.card_bg);
+    // Buttons
+    document.querySelectorAll('.btn-brand').forEach(b => {
+      if (c.btn_primary_bg)    b.style.backgroundColor = c.btn_primary_bg;
+      if (c.btn_primary_color) b.style.color = c.btn_primary_color;
+    });
+    document.querySelectorAll('.btn-secondary-dark').forEach(b => {
+      if (c.btn_secondary_bg)    b.style.backgroundColor = c.btn_secondary_bg;
+      if (c.btn_secondary_color) b.style.color = c.btn_secondary_color;
+    });
+    // Navbar brand logo
+    document.querySelectorAll('.brand-logo-wrap').forEach(el => {
+      if (c.navbar_brand_bg)    el.style.backgroundColor = c.navbar_brand_bg;
+      if (c.navbar_brand_color) el.style.color = c.navbar_brand_color;
+    });
+    // Texts
+    if (c.hero_subtitle) {
+      const sub = document.querySelector('.hero-container-wrap .lead');
+      if (sub) sub.textContent = c.hero_subtitle;
+    }
+    if (c.cta_title) {
+      const el = document.querySelector('section.py-5.text-center h3');
+      if (el) el.textContent = c.cta_title;
+    }
+    if (c.cta_subtitle) {
+      const el = document.querySelector('section.py-5.text-center p.small');
+      if (el) el.textContent = c.cta_subtitle;
+    }
+    if (c.features_title) {
+      const el = document.querySelector('#features h2');
+      if (el) el.textContent = c.features_title;
+    }
+    if (c.footer_text) {
+      const el = document.querySelector('footer .fw-semibold span:first-child');
+      if (el) el.textContent = c.footer_text.replace(/ © .*/,'');
+    }
+  } catch(e) {}
+})();
+</script>
+</body>
+</html>

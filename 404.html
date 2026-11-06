@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>404 — Page not found · DAVAI</title>
+<meta name="theme-color" content="#f26522"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0e1629;color:#e8eaf0;font-family:'Inter',system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;text-align:center}
+.wrap{max-width:480px}
+.orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0}
+.o1{width:400px;height:400px;background:rgba(242,101,34,.1);top:-100px;left:-100px}
+.o2{width:300px;height:300px;background:rgba(168,85,247,.08);bottom:0;right:-80px}
+.inner{position:relative;z-index:1}
+.code{font-size:7rem;font-weight:900;line-height:1;letter-spacing:-.04em;background:linear-gradient(135deg,#f26522,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.logo{display:inline-flex;align-items:center;gap:.5rem;font-weight:900;font-size:1.1rem;margin-bottom:2rem;text-decoration:none;color:#e8eaf0}
+.li{width:28px;height:28px;background:#f26522;border-radius:7px;display:grid;place-items:center;color:#fff;font-size:.85rem;font-weight:900}
+h1{font-size:1.4rem;font-weight:900;margin:.75rem 0 .5rem}
+p{font-size:.9rem;color:#8892a4;line-height:1.7;margin-bottom:2rem}
+.btn{display:inline-flex;align-items:center;gap:.4rem;background:#f26522;color:#fff;padding:.75rem 1.5rem;border-radius:10px;font-weight:700;font-size:.92rem;text-decoration:none;transition:.2s;margin:.3rem}
+.btn:hover{opacity:.85;transform:translateY(-2px)}
+.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.15);color:#e8eaf0}
+.btn.ghost:hover{background:rgba(255,255,255,.06)}
+.emoji{font-size:3.5rem;margin-bottom:.5rem;display:block}
+</style>
+</head>
+<body>
+<div class="orb o1"></div>
+<div class="orb o2"></div>
+<div class="inner">
+  <a class="logo" href="/"><div class="li">D</div><span>DAVAI</span></a>
+  <span class="emoji">🗺️</span>
+  <div class="code">404</div>
+  <h1>This page doesn't exist</h1>
+  <p>Looks like you took a wrong turn. Don't worry — it happens to the best IB students too.<br/>Head back home and keep studying. 🎓</p>
+  <div>
+    <a href="/" class="btn">🏠 Go home</a>
+    <a href="/#features" class="btn ghost">See features</a>
+  </div>
+  <div style="margin-top:2.5rem;font-size:.78rem;color:#8892a4">
+    Built in Baku 🇦🇿 · <a href="https://instagram.com/davai.tech" target="_blank" style="color:#f26522">@davai.tech</a>
+  </div>
+</div>
+</body>
+</html>

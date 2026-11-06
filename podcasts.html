@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Study Podcasts & Videos — DAVAI</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#000000;--card:#0e0e11;--card-hover:#16161a;--text:#ffffff;--sub:#a1a1aa;--brand:#ffffff;--surface:#070709}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;min-height:100vh;padding-bottom:80px}
+a{color:inherit;text-decoration:none}
+nav{position:sticky;top:0;z-index:100;background:transparent;border-bottom:none;padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-size:1.15rem;font-weight:700;display:flex;align-items:center;gap:.5rem;color:#f8fafc;letter-spacing:-0.02em}
+.logo-icon{width:28px;height:28px;background:#ffffff;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#000000}
+.nav-links{display:flex;align-items:center;gap:1.5rem;font-size:.9rem;color:var(--sub)}
+.nav-links a:hover{color:var(--text)}
+.nav-links a.active{color:#f8fafc;font-weight:600}
+.back-btn{background:rgba(255,255,255,0.08);border:none;color:var(--text);border-radius:8px;padding:.45rem .95rem;cursor:pointer;font-size:.82rem;font-family:inherit;transition:background-color .15s}
+.back-btn:hover{background:rgba(255,255,255,0.14)}
+@media(max-width:600px){.nav-links{display:none}}
+.pod-hero{text-align:center;padding:3rem 1.5rem 1.5rem;max-width:680px;margin:0 auto}
+.pod-hero h1{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:700;line-height:1.25;margin-bottom:.75rem;color:#f8fafc;letter-spacing:-0.02em}
+.pod-hero p{font-size:.95rem;color:var(--sub);line-height:1.6}
+.search-wrap{max-width:480px;margin:1.25rem auto 0;padding:0 1.5rem}
+.search-inp{width:100%;background:var(--card);border:none;border-radius:8px;padding:.75rem 1.1rem;color:var(--text);font-size:.9rem;font-family:inherit;outline:none}
+.search-inp:focus{background:#131317}
+.filter-bar{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;padding:1.25rem 1.5rem}
+.ftab{background:rgba(255,255,255,0.06);border:none;border-radius:20px;padding:.4rem .95rem;font-size:.82rem;font-weight:500;cursor:pointer;color:var(--sub);font-family:inherit;transition:all .15s}
+.ftab:hover{color:#ffffff;background:rgba(255,255,255,0.12)}
+.ftab.active{background:#ffffff;color:#000000;font-weight:600}
+.pod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem;max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem}
+.pcard{background:var(--card);border:none;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;transition:background-color .15s}
+.pcard:hover{background-color:var(--card-hover)}
+.pthumb{position:relative;overflow:hidden;cursor:pointer;aspect-ratio:16/9;background:var(--surface)}
+.pthumb img{width:100%;height:100%;object-fit:cover}
+.pthumb-overlay{position:absolute;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;opacity:0;transition:.2s}
+.pcard:hover .pthumb-overlay,.pcard.playing .pthumb-overlay{opacity:1}
+.pplay-icon{width:46px;height:46px;background:#ffffff;color:#000000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.pbadge{position:absolute;top:.6rem;left:.6rem;display:flex;gap:.35rem;flex-wrap:wrap}
+.pbadge span{background:rgba(0,0,0,.75);color:var(--text);font-size:.65rem;font-weight:600;padding:.25rem .55rem;border-radius:4px}
+.pbody{padding:1.25rem;display:flex;flex-direction:column;gap:.5rem;flex:1}
+.ptitle{font-weight:600;font-size:.92rem;line-height:1.4;color:#f8fafc}
+.pdesc{font-size:.82rem;color:var(--sub);line-height:1.5;flex:1}
+.pmeta{display:flex;align-items:center;justify-content:space-between;font-size:.75rem;color:var(--sub)}
+.pactions{display:flex;gap:.5rem;margin-top:.3rem;flex-wrap:wrap}
+.pwatch{background:#ffffff;border:none;color:#000000;border-radius:8px;padding:.5rem .9rem;font-size:.8rem;font-weight:600;cursor:pointer;font-family:inherit;flex:1;transition:background-color .15s}
+.pwatch:hover{background:#e4e4e7}
+.pbtn-yt{background:rgba(255,255,255,0.06);border:none;color:var(--sub);border-radius:8px;padding:.5rem .8rem;font-size:.8rem;font-weight:500;text-decoration:none;display:inline-flex;align-items:center}
+.pbtn-yt:hover{background:rgba(255,255,255,0.12);color:#ffffff}
+.pbtn-share{background:rgba(255,255,255,0.06);border:none;color:var(--sub);border-radius:8px;padding:.5rem .7rem;font-size:.8rem;cursor:pointer;font-family:inherit}
+.pbtn-share:hover{background:rgba(255,255,255,0.12);color:#ffffff}
+.pbtn-bm{background:none;border:none;color:var(--sub);font-size:1rem;cursor:pointer;padding:.3rem;line-height:1}
+.pbtn-bm.saved{color:#ffffff}
+.pinline{display:none;aspect-ratio:16/9}
+.pinline iframe{width:100%;height:100%;border:none;display:block}
+.empty-state{text-align:center;padding:3rem 1.5rem;color:var(--sub);grid-column:1/-1}
+.empty-state h3{font-size:1.05rem;font-weight:600;color:var(--text);margin-bottom:.5rem}
+.cs-card{background:var(--card);border:none;border-radius:12px;padding:2rem;display:flex;flex-direction:column;align-items:center;gap:.75rem;text-align:center;min-height:200px;grid-column:1/-1}
+.cs-card .cs-title{font-weight:600;color:var(--text);font-size:.92rem}
+.cs-card .cs-sub{font-size:.82rem;color:var(--sub);line-height:1.5}
+#now-playing-bar{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--card);padding:.75rem 1.5rem;align-items:center;gap:1rem;z-index:200;cursor:pointer}
+#np-title{font-size:.85rem;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.np-stop{background:rgba(255,255,255,0.08);border:none;color:var(--text);border-radius:8px;padding:.4rem .85rem;cursor:pointer;font-size:.8rem;font-family:inherit}
+.pod-footer{text-align:center;padding:2rem 1.5rem;color:var(--sub);font-size:.82rem;margin-top:2rem}
+.pod-footer a{color:#f8fafc;text-decoration:underline}
+</style>
+</head>
+<body>
+<nav>
+  <a href="/" class="nav-logo">
+    <div class="logo-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+      </svg>
+    </div>
+    <span>DAVAI</span>
+  </a>
+  <div class="nav-links">
+    <a href="/#features">Tools</a>
+    <a href="/#assistant">Assistant</a>
+    <a href="/podcasts" class="active">Podcasts</a>
+    <a href="/privacy">Privacy</a>
+  </div>
+  <button class="back-btn" onclick="location.href='/'">← Home</button>
+</nav>
+
+<div class="pod-hero">
+  <h1>Curated Study Sessions & Podcasts</h1>
+  <p>Evidence-based lectures and study discussions for IB Diploma and IELTS students. Stream inline without algorithmic distractions.</p>
+</div>
+
+<div class="search-wrap">
+  <input class="search-inp" id="pod-search" type="search" placeholder="Search sessions..." oninput="renderGrid()" autocomplete="off">
+</div>
+
+<div class="filter-bar">
+  <button class="ftab active" onclick="setFilter('all',this)">All</button>
+  <button class="ftab" onclick="setFilter('study',this)">Study Methods</button>
+  <button class="ftab" onclick="setFilter('ib',this)">IB Diploma</button>
+  <button class="ftab" onclick="setFilter('ielts',this)">IELTS</button>
+  <button class="ftab" onclick="setFilter('english',this)">Academic English</button>
+  <button class="ftab" onclick="setFilter('saved',this)">Saved</button>
+</div>
+
+<div class="pod-grid" id="pod-grid"></div>
+
+<div id="now-playing-bar" onclick="scrollToPlaying()">
+  <span id="np-title">Now playing...</span>
+  <button class="np-stop" onclick="event.stopPropagation();stopAll()">Close</button>
+</div>
+
+<div class="pod-footer">
+  <p><a href="/">DAVAI</a> · <a href="/privacy">Privacy</a> · Videos via youtube-nocookie.com</p>
+</div>
+
+<script>
+var VIDEOS=[
+  {id:'mzexJPoXBCM',cat:'study',title:'Active Recall & Study Protocols',desc:'Dr. Andrew Huberman and Dr. Cal Newport analyze the cognitive science of active recall and focused study blocks.',dur:'1:02:14'},
+  {id:'84dYijIpWjQ',cat:'study',title:'Discipline & Mental Resilience',desc:'Frameworks for maintaining academic focus and cognitive resilience during prolonged examination periods.',dur:'2:11:45'}
+];
+var COMING={
+  ib:{title:'IB Diploma Sessions Coming Soon',sub:'TOK essay breakdowns, Extended Essay scoping, and IA criteria analysis.'},
+  ielts:{title:'IELTS Sessions Coming Soon',sub:'Task 2 argumentation structures and speaking criteria evaluations.'},
+  english:{title:'Academic English Coming Soon',sub:'Formal academic writing styles and advanced vocabulary collocations.'}
+};
+var activeFilter='all',activeVid=null;
+function ls(k,d){try{return localStorage.getItem(k)||d;}catch(e){return d;}}
+function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+function getSaved(){try{return JSON.parse(ls('davai_bm','[]'));}catch(e){return[];}}
+function getWatched(){try{return JSON.parse(ls('davai_watched','[]'));}catch(e){return[];}}
+function getCatLabel(c){return{study:'Study Methods',ib:'IB Diploma',ielts:'IELTS',english:'English'}[c]||c;}
+function renderGrid(){
+  var grid=document.getElementById('pod-grid');
+  var q=(document.getElementById('pod-search').value||'').toLowerCase().trim();
+  var saved=getSaved(),watched=getWatched();
+  var videos=VIDEOS.filter(function(v){
+    if(activeFilter==='saved') return saved.indexOf(v.id)>=0;
+    if(activeFilter!=='all'&&v.cat!==activeFilter) return false;
+    if(q&&v.title.toLowerCase().indexOf(q)<0&&v.desc.toLowerCase().indexOf(q)<0) return false;
+    return true;
+  });
+  grid.innerHTML='';
+  if(videos.length===0){
+    if(activeFilter==='saved'){grid.innerHTML='<div class="empty-state"><h3>No saved sessions</h3><p>Click the bookmark icon on any session to save it here.</p></div>';return;}
+    if(q){grid.innerHTML='<div class="empty-state"><h3>No results for &ldquo;'+q+'&rdquo;</h3><p>Try searching for a different keyword.</p></div>';return;}
+    if(COMING[activeFilter]){var cs=COMING[activeFilter];grid.innerHTML='<div class="cs-card"><div class="cs-title">'+cs.title+'</div><div class="cs-sub">'+cs.sub+'</div></div>';return;}
+    return;
+  }
+  videos.forEach(function(v){
+    var isSaved=saved.indexOf(v.id)>=0,isWatched=watched.indexOf(v.id)>=0;
+    var thumb='https://img.youtube.com/vi/'+v.id+'/hqdefault.jpg';
+    var card=document.createElement('div');
+    card.className='pcard';
+    card.setAttribute('data-id',v.id);
+    var bmClass='pbtn-bm'+(isSaved?' saved':'');
+    var vid=v.id;
+    var etitle=v.title.replace(/"/g,'&quot;');
+    card.innerHTML='<div class="pthumb" onclick="playInline(\'' +vid+ '\',this)"><img src="'+thumb+'" alt="'+etitle+'" loading="lazy"><div class="pthumb-overlay"><div class="pplay-icon">▶</div></div><div class="pbadge"><span>'+getCatLabel(v.cat)+'</span>'+(isWatched?'<span>Watched</span>':'')+'</div></div>'
+      +'<div class="pinline" id="player-'+vid+'"></div>'
+      +'<div class="pbody"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem"><div class="ptitle">'+v.title+'</div>'
+      +'<button class="'+bmClass+'" id="bm-'+vid+'" onclick="toggleBookmark(\'' +vid+ '\',this)" title="Save">★</button></div>'
+      +'<div class="pdesc">'+v.desc+'</div>'
+      +'<div class="pmeta"><span>'+v.dur+'</span></div>'
+      +'<div class="pactions"><button class="pwatch" id="watch-'+vid+'" onclick="playInline(\'' +vid+ '\',this)">Watch</button>'
+      +'<a href="https://www.youtube.com/watch?v='+vid+'" target="_blank" rel="noopener" class="pbtn-yt">YouTube ↗</a>'
+      +'<button class="pbtn-share" onclick="shareVideo(\'' +vid+ '\',\'' +etitle+ '\')" title="Share">Share</button></div></div>';
+    grid.appendChild(card);
+  });
+}
+function setFilter(cat,btn){
+  activeFilter=cat;
+  document.querySelectorAll('.ftab').forEach(function(t){t.classList.remove('active');});
+  btn.classList.add('active');
+  renderGrid();
+}
+function playInline(vid,trigger){
+  var player=document.getElementById('player-'+vid);
+  var card=document.querySelector('[data-id="'+vid+'"]');
+  var btn=document.getElementById('watch-'+vid);
+  document.querySelectorAll('.pinline').forEach(function(p){if(p.id!=='player-'+vid){p.style.display='none';p.innerHTML='';}});
+  document.querySelectorAll('.pcard').forEach(function(c){if(c!==card){c.classList.remove('playing');var b=c.querySelector('.pwatch');if(b)b.innerHTML='Watch';}});
+  if(player.style.display==='block'){
+    player.style.display='none';player.innerHTML='';
+    card.classList.remove('playing');
+    if(btn)btn.innerHTML='Watch';
+    document.getElementById('now-playing-bar').style.display='none';
+    activeVid=null;
+  } else {
+    player.style.display='block';
+    player.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+vid+'?autoplay=1&rel=0&modestbranding=1" allowfullscreen allow="autoplay;encrypted-media;picture-in-picture"></iframe>';
+    card.classList.add('playing');
+    if(btn)btn.innerHTML='Close';
+    activeVid=vid;
+    var w=getWatched();if(w.indexOf(vid)<0){w.push(vid);lsSet('davai_watched',JSON.stringify(w));}
+    var vd=null;for(var i=0;i<VIDEOS.length;i++){if(VIDEOS[i].id===vid){vd=VIDEOS[i];break;}}
+    document.getElementById('np-title').textContent=vd?vd.title:'Now playing...';
+    document.getElementById('now-playing-bar').style.display='flex';
+  }
+}
+function stopAll(){
+  document.querySelectorAll('.pinline').forEach(function(p){p.style.display='none';p.innerHTML='';});
+  document.querySelectorAll('.pcard').forEach(function(c){c.classList.remove('playing');var b=c.querySelector('.pwatch');if(b)b.innerHTML='Watch';});
+  document.getElementById('now-playing-bar').style.display='none';
+  activeVid=null;
+}
+function scrollToPlaying(){
+  if(!activeVid)return;
+  var card=document.querySelector('[data-id="'+activeVid+'"]');
+  if(card)card.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function toggleBookmark(vid,btn){
+  var saved=getSaved(),idx=saved.indexOf(vid);
+  if(idx>=0){saved.splice(idx,1);btn.classList.remove('saved');}
+  else{saved.push(vid);btn.classList.add('saved');}
+  lsSet('davai_bm',JSON.stringify(saved));
+  if(activeFilter==='saved')renderGrid();
+}
+function shareVideo(vid,title){
+  var url=location.origin+'/podcasts?v='+vid;
+  if(navigator.share&&/Mobi|Android/i.test(navigator.userAgent)){
+    navigator.share({title:'DAVAI: '+title,url:url}).catch(function(){});
+  } else {
+    try{navigator.clipboard.writeText(url).then(function(){alert('Link copied to clipboard');});}
+    catch(e){}
+  }
+}
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&activeVid)stopAll();});
+renderGrid();
+</script>
+</body>
+</html>

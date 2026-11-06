@@ -1,0 +1,42 @@
+{
+  "name": "DAVAI — AI Study Platform",
+  "short_name": "DAVAI",
+  "description": "Free AI study platform for IB students and English learners. Built in Baku.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0e1629",
+  "theme_color": "#f26522",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "lang": "en",
+  "shortcuts": [
+    {
+      "name": "AI Chat",
+      "short_name": "Chat",
+      "description": "Ask DAVAI AI anything",
+      "url": "/#demo",
+      "icons": [{ "src": "/assets/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Features",
+      "short_name": "Features",
+      "description": "See all DAVAI features",
+      "url": "/#features",
+      "icons": [{ "src": "/assets/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

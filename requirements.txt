@@ -1,0 +1,1 @@
+# DAVAI proxy — pure Python stdlib, no third-party packages required
