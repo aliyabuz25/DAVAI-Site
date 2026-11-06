@@ -10,7 +10,12 @@ services:
     environment:
       PORT: "5050"
       HOST: "0.0.0.0"
+      # --- Set these in Portainer → Stack → Environment variables ---
       ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY}"
+      SUPABASE_URL: "${SUPABASE_URL}"
+      SUPABASE_ANON_KEY: "${SUPABASE_ANON_KEY}"
+      SUPABASE_SERVICE_KEY: "${SUPABASE_SERVICE_KEY}"
+      # --------------------------------------------------------------
       ALLOWED_ORIGINS: "https://davai.tech,http://davai.tech"
       TRUST_PROXY: "1"
     volumes:
